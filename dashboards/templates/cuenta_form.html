@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Ingresar{% endblock %}
+
+{% block content %}
+<h2>Agregar cuenta</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar cuenta</button>
+</form>
+
+<a href="{% url 'dashboards:lista_cuentas' %}">Volver</a>
+
+{% endblock %}

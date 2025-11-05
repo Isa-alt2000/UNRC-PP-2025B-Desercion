@@ -1,0 +1,11 @@
+django
+psycopg2
+django-ckeditor
+django-widget-tweaks
+pillow
+crispy-bootstrap5
+django-crispy-forms
+dotenv
+
+
+

@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Perfil de {{ user.display_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar de navegación -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header text-center" style="background-color: var(--color-principal); color: var(--color-blanco);">
+                    <h5 class="mb-0">Mi Perfil</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="#perfil" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                        <i class="fas fa-user me-2"></i>Perfil
+                    </a>
+                    <a href="#imagen" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="fas fa-image me-2"></i>Imagen de Perfil
+                    </a>
+                    <a href="#seguridad" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="fas fa-lock me-2"></i>Seguridad
+                    </a>
+                    <a href="#entradas" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="fas fa-file-alt me-2"></i>Mis Entradas
+                    </a>
+                    <a href="#comentarios" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="fas fa-comments me-2"></i>Mis Comentarios
+                    </a>
+                    <a href="{% url 'users:public_profile' profile_slug=user.profile_slug %}"  class="list-group-item list-group-item-action">
+                        <i class="fas fa-comments me-2"></i>Vista pública
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header" style="background-color: var(--color-principal); color: var(--color-blanco);">
+                    <div class="d-flex justify-content-between align-items-center">
+                    {% if user.groups.first %}
+                    <h5 class="d-flex justify-content-between align-items-center">Perfil de {{ user.display_name }} <span class="badge text-bg-light">{{ user.groups.first.name }}</span></h5>
+                    {% elif user.is_superuser %}
+                    <h5 class="d-flex justify-content-between align-items-center">Perfil de {{ user.display_name }} <span class="badge bg-danger">SuperAdmin</span></h5>
+                    {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="perfil">
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="profile">
+                                <div class="text-center mb-4">
+                                    {% if user.profile_image %}
+                                    <img src="{{ user.profile_image.url }}" alt="Imagen de perfil" 
+                                         class="rounded-circle shadow" width="150" height="150"
+                                         style="object-fit: cover; border: 3px solid var(--color-secundario);">
+                                    {% else %}
+                                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center shadow"
+                                         style="width: 150px; height: 150px; background-color: var(--color-secundario); color: white; font-size: 3rem;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Nombre de usuario</label>
+                                        {{ profile_form.username }}
+                                        <div class="form-text">Este es tu nombre público en el sitio y no puede ser cambiado.</div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Alias/Nickname</label>
+                                        {{ profile_form.alias }}
+                                        <div class="form-text">Apodo que se mostrará en tus publicaciones.</div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Correo electrónico</label>
+                                    {{ profile_form.email }}
+                                    <div class="form-text">El correo electrónico no puede ser modificado.</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Biografía</label>
+                                    {{ profile_form.bio }}
+                                </div>
+
+                                <button type="submit" class="btn btn-principal">
+                                    <i class="fas fa-save me-2"></i> Guardar Cambios
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Pestaña de Imagen de Perfil -->
+                        <div class="tab-pane fade" id="imagen">
+                            <div class="text-center mb-4">
+                                {% if user.profile_image %}
+                                <img src="{{ user.profile_image.url }}" alt="Imagen actual" 
+                                     class="rounded-circle shadow mb-3" width="200" height="200"
+                                     style="object-fit: cover; border: 3px solid var(--color-secundario);">
+                                {% else %}
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center shadow mb-3"
+                                     style="width: 200px; height: 200px; background-color: var(--color-secundario); color: white; font-size: 4rem;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="image">
+                                
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Seleccionar nueva imagen</label>
+                                    <input type="file" class="form-control" name="profile_image" accept="image/*">
+                                    <div class="form-text">Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 2MB.</div>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-principal">
+                                        <i class="fas fa-upload me-2"></i>Subir Imagen
+                                    </button>
+                                    
+                                    {% if user.profile_image %}
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteImageModal">
+                                        <i class="fas fa-trash me-2"></i>Eliminar Imagen
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Pestaña de Seguridad -->
+                        <div class="tab-pane fade" id="seguridad">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Gestiona la seguridad de tu cuenta aquí.
+                            </div>
+
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="password">
+                                
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Contraseña actual</label>
+                                    <input type="password" class="form-control" name="current_password" required>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Nueva contraseña</label>
+                                        <input type="password" class="form-control" name="new_password" required>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Confirmar nueva contraseña</label>
+                                        <input type="password" class="form-control" name="confirm_password" required>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-principal">
+                                    <i class="fas fa-key me-2"></i>Cambiar Contraseña
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Pestaña de Últimas Entradas -->
+                        <div class="tab-pane fade" id="entradas">
+                            <h5 class="mb-4">Mis Publicaciones</h5>
+
+                        </div>
+
+                        <!-- Pestaña de Comentarios -->
+                        <div class="tab-pane fade" id="comentarios">
+                            <h5 class="mb-4">Mis Comentarios</h5>
+                            
+
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para eliminar imagen -->
+<div class="modal fade" id="deleteImageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: var(--color-principal); color: white;">
+                <h5 class="modal-title">Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres eliminar tu imagen de perfil?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="delete_image">
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .list-group-item.active {
+        background-color: var(--color-principal) !important;
+        border-color: var(--color-principal) !important;
+    }
+    
+    .btn-outline-principal {
+        color: var(--color-principal);
+        border-color: var(--color-principal);
+    }
+    
+    .btn-outline-principal:hover {
+        background-color: var(--color-principal);
+        color: white;
+    }
+</style>
+{% endblock %}

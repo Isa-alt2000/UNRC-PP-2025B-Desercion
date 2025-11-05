@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard de Usuarios - Administración{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 mb-0">
+            <i class="fas fa-users-cog me-2"></i>Dashboard de Usuarios
+        </h1>
+        <div>
+            <span class="badge bg-principal fs-6">
+                <i class="fas fa-database me-1"></i>
+                Total: {{ users.count }} usuarios
+            </span>
+        </div>
+    </div>
+
+    <!-- Filtros y Búsqueda -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <form method="get" class="d-flex">
+                        <input type="text" name="q" class="form-control me-2" 
+                               placeholder="Buscar por nombre, email o alias..." 
+                               value="{{ request.GET.q }}">
+                        <button type="submit" class="btn btn-principal">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex gap-2 justify-content-md-end">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-principal dropdown-toggle" type="button" 
+                                    data-bs-toggle="dropdown">
+                                <i class="fas fa-filter me-1"></i>Filtrar
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="?filter=all">Todos</a></li>
+                                <li><a class="dropdown-item" href="?filter=active">Activos</a></li>
+                                <li><a class="dropdown-item" href="?filter=inactive">Inactivos</a></li>
+                                <li><a class="dropdown-item" href="?filter=staff">Staff</a></li>
+                                <li><a class="dropdown-item" href="?filter=superusers">Superusers</a></li>
+                            </ul>
+                        </div>
+                        <a href="/admin/auth/user/add/" class="btn btn-principal">
+                            <i class="fas fa-plus me-1"></i>Nuevo Usuario
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas Rápidas -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ active_users }}</h5>
+                    <p class="card-text">Activos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ staff_users }}</h5>
+                    <p class="card-text">Staff</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card bg-warning text-dark">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ superusers }}</h5>
+                    <p class="card-text">Superusers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card bg-danger text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ inactive_users }}</h5>
+                    <p class="card-text">Inactivos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Usuarios -->
+    <div class="card shadow-lg">
+        <div class="card-header" style="background-color: var(--color-principal); color: white;">
+            <h5 class="mb-0">
+                <i class="fas fa-list me-2"></i>Lista de Usuarios Registrados
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Alias</th>
+                            <th>Estado</th>
+                            <th>Registro</th>
+                            <th>Último login</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td><strong>#{{ user.id }}</strong></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if user.profile_image %}
+                                    <img src="{{ user.profile_image.url }}" 
+                                         class="rounded-circle me-2" 
+                                         width="32" height="32" 
+                                         style="object-fit: cover;">
+                                    {% else %}
+                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-2"
+                                         style="width: 32px; height: 32px;">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <div class="fw-bold">{{ user.username }}</div>
+                                        <small class="text-muted">{{ user.get_full_name|default:"Sin nombre" }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                {% if user.alias %}
+                                <span class="badge bg-info">{{ user.alias }}</span>
+                                {% else %}
+                                <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.is_superuser %}
+                                <span class="badge bg-danger">SuperAdmin</span>
+                                {% elif user.is_staff %}
+                                <span class="badge bg-warning text-dark">Staff</span>
+                                {% else %}
+                                <span class="badge bg-success">Usuario</span>
+                                {% endif %}
+                                
+                                {% if not user.is_active %}
+                                <span class="badge bg-secondary ms-1">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <small>{{ user.date_joined|date:"d/m/Y" }}</small>
+                                <br>
+                                <small class="text-muted">{{ user.date_joined|date:"H:i" }}</small>
+                            </td>
+                            <td>
+                                {% if user.last_login %}
+                                <small>{{ user.last_login|date:"d/m/Y" }}</small>
+                                <br>
+                                <small class="text-muted">{{ user.last_login|date:"H:i" }}</small>
+                                {% else %}
+                                <span class="text-muted">Nunca</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'users:public_profile' profile_slug=user.profile_slug %}" 
+                                       class="btn btn-outline-primary" 
+                                       title="Ver perfil público">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="/admin/auth/user/add/" 
+                                       class="btn btn-outline-warning"
+                                       title="Editar en admin">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn btn-outline-info" 
+                                            title="Información detallada"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#userModal{{ user.id }}">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Modal de Información -->
+                        <div class="modal fade" id="userModal{{ user.id }}" tabindex="-1">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header" style="background-color: var(--color-principal); color: white;">
+                                        <h5 class="modal-title">Detalles de {{ user.username }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h6>Información Básica</h6>
+                                                <p><strong>ID:</strong> {{ user.id }}</p>
+                                                <p><strong>Username:</strong> {{ user.username }}</p>
+                                                <p><strong>Email:</strong> {{ user.email }}</p>
+                                                <p><strong>Nombre completo:</strong> {{ user.get_full_name|default:"No especificado" }}</p>
+                                                <p><strong>Alias:</strong> {{ user.alias|default:"No especificado" }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h6>Estadísticas</h6>
+                                                <p><strong>Fecha registro:</strong> {{ user.date_joined }}</p>
+                                                <p><strong>Último login:</strong> {{ user.last_login|default:"Nunca" }}</p>
+                                                <p><strong>Estado:</strong> 
+                                                    {% if user.is_active %}Activo{% else %}Inactivo{% endif %}
+                                                </p>
+                                                <p><strong>Posts:</strong> {{ user.post_set.count }}</p>
+                                                <p><strong>Comentarios:</strong> {{ user.comment_set.count }}</p>
+                                            </div>
+                                        </div>
+                                        {% if user.bio %}
+                                        <hr>
+                                        <h6>Biografía</h6>
+                                        <p class="text-muted">{{ user.bio }}</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        <a href="/admin/auth/user/add/">
+                                            Editar en Admin
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No hay usuarios registrados</h5>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+            <!-- Paginación -->
+            {% if is_paginated %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}">Anterior</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}">Siguiente</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Exportar Datos -->
+    <div class="text-center mt-4">
+        <div class="btn-group">
+            <button class="btn btn-outline-success">
+                <i class="fas fa-download me-1"></i>Exportar Datos
+            </button>
+            <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" 
+                    data-bs-toggle="dropdown">
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#"><i class="fas fa-file-csv me-1"></i>CSV</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-file-excel me-1"></i>Excel</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-file-pdf me-1"></i>PDF</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table th {
+        background-color: var(--color-principal);
+        color: white;
+        border-color: var(--color-principal);
+    }
+    
+    .btn-outline-principal {
+        color: var(--color-principal);
+        border-color: var(--color-principal);
+    }
+    
+    .btn-outline-principal:hover {
+        background-color: var(--color-principal);
+        color: white;
+    }
+    
+    .card.bg-principal {
+        background-color: var(--color-principal) !important;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(159, 34, 65, 0.1);
+    }
+</style>
+{% endblock %}

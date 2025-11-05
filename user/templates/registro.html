@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Registro {% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow-lg border-0 rounded-3">
+      <div class="card-header text-center" style="background-color: var(--color-principal); color: var(--color-blanco);">
+        <h4 class="mb-0">Crear una cuenta</h4>
+      </div>
+      <div class="card-body p-4">
+        <form method="post">
+          {% csrf_token %}
+          {% load widget_tweaks %}
+          {{ form.non_field_errors }}
+
+          <div class="mb-3">
+            <label for="id_username" class="form-label">Nombre de usuario</label>
+            {{ form.username|add_class:"form-control" }}
+            {% if form.username.errors %}
+              <div class="text-danger">{{ form.username.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label for="id_alias" class="form-label">Alias</label>
+            {{ form.alias|add_class:"form-control" }}
+            {% if form.alias.errors %}
+              <div class="text-danger">{{ form.alias.errors }}</div>
+            {% endif %}
+          </div>
+          
+          <div class="mb-3">
+            <label for="id_email" class="form-label">Correo electrónico</label>
+            {{ form.email|add_class:"form-control" }}
+            {% if form.email.errors %}
+              <div class="text-danger">{{ form.email.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label for="id_password1" class="form-label">Contraseña</label>
+            {{ form.password1|add_class:"form-control" }}
+            {% if form.password1.errors %}
+              <div class="text-danger">{{ form.password1.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label for="id_password2" class="form-label">Confirmar contraseña</label>
+            {{ form.password2|add_class:"form-control" }}
+            {% if form.password2.errors %}
+              <div class="text-danger">{{ form.password2.errors }}</div>
+            {% endif %}
+          </div>
+
+          <button type="submit" class="btn btn-principal w-100">Registrarme</button>
+        </form>
+      </div>
+      <div class="card-footer text-center" style="background-color: var(--color-secundario); color: var(--color-blanco);">
+        <small>¿Ya tienes cuenta? <a href="{% url 'users:login' %}" class="text-white fw-bold">Inicia sesión</a></small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal fuera del formulario -->
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'success' %}
+    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #9F2241; color:white;">
+            <h5 class="modal-title">Registro Exitoso</h5>
+          </div>
+          <div class="modal-body text-center">
+            <i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>
+            <h4>{{ message }}</h4>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-principal" onclick="redirectToLogin()">
+              De acuerdo
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Mostrar el modal automáticamente
+      document.addEventListener('DOMContentLoaded', function() {
+        var myModal = new bootstrap.Modal(document.getElementById('successModal'));
+        myModal.show();
+      });
+      
+      // Función para redirigir al login
+      function redirectToLogin() {
+        window.location.href = "{% url 'users:login' %}";
+      }
+    </script>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% endblock %}
