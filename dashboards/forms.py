@@ -1,19 +1,28 @@
 from django import forms
-from .models import Cuenta, Ingreso, Egreso
+from django.core.exceptions import ValidationError
+from .models import Cuenta, Movimiento
+
 
 class CuentaForm(forms.ModelForm):
     class Meta:
         model = Cuenta
-        fields = ['nombre', 'tipo', 'saldo_inicial', 'descripcion']
+        fields = ['nombre', 'descripcion']
 
 
-class IngresoForm(forms.ModelForm):
+class MovimientoForm(forms.ModelForm):
     class Meta:
-        model = Ingreso
-        fields = ['cuenta', 'categoria', 'monto', 'descripcion']
+        model = Movimiento
+        fields = ['tipo', 'monto', 'descripcion', 'fecha']
+        widgets = {
+            'fecha': forms.DateInput(attrs={'type': 'date'}),
+            'monto': forms.NumberInput(attrs={'min': '0', 'step': '0.01'}),
+        }
 
+    def clean_monto(self):
+        monto = self.cleaned_data.get('monto')
 
-class EgresoForm(forms.ModelForm):
-    class Meta:
-        model = Egreso
-        fields = ['cuenta', 'categoria', 'monto', 'descripcion']
+        if monto is None:
+            raise ValidationError("El monto es obligatorio.")
+        if monto < 0:
+            raise ValidationError("El monto no puede ser negativo.")
+        return monto

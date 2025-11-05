@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Detalle de la cuenta{% endblock %}
+
+{% block content %}
+<h2>{{ cuenta.nombre }}</h2>
+<p>{{ cuenta.descripcion }}</p>
+<p><strong>Balance:</strong> ${{ balance }}</p>
+
+<a href="{% url 'dashboards:agregar_movimiento' cuenta.id %}">+ Agregar movimiento</a>
+
+<table border="1">
+  <tr>
+    <th>Fecha</th>
+    <th>Descripcion</th>
+    <th>Tipo</th>
+    <th>Monto</th>
+  </tr>
+  {% for mov in movimientos %}
+  <tr>
+    <td>{{ mov.fecha }}</td>
+    <td>{{ mov.descripcion }}</td>
+    <td>{{ mov.tipo }}</td>
+    {% if mov.tipo == 'EGRESO' %}
+        <td>$ -{{ mov.monto }}</td>
+    {% else %}
+        <td>$ {{ mov.monto }}</td>
+    {% endif %}
+    <td>
+        <form method="post"
+                action="{% url 'dashboards:eliminar_movimiento' cuenta.id mov.id %}"
+                style="display:inline;"
+                onsubmit="return confirmarEliminacion(event)">
+            {% csrf_token %}
+            <button type="submit" style="color:red;">X</button>
+        </form>
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="3">No hay movimientos aún.</td></tr>
+  {% endfor %}
+</table>
+
+<a href="{% url 'dashboards:lista_cuentas' %}">Volver</a>
+
+<script>
+function confirmarEliminacion(event) {
+  event.preventDefault();
+  const confirmacion = confirm("¿Seguro que deseas eliminar este movimiento?");
+  if (confirmacion) {
+    event.target.submit();
+  }
+}
+</script>
+{% endblock %}

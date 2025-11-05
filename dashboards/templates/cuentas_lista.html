@@ -4,31 +4,37 @@
 {% block title %}Mis finanzas{% endblock %}
 
 {% block content %}
-<h2>Mis cuentas</h2>
+<h1>Mis Cuentas</h1>
 
-<a href="{% url 'dashboards:crear_cuenta' %}">Agregar nueva cuenta</a>
+<a href="{% url 'dashboards:crear_cuenta' %}">Nueva Cuenta</a>
 
-<table border="1" cellpadding="5">
-    <tr>
-        <th>Nombre</th>
-        <th>Tipo</th>
-        <th>Saldo inicial</th>
-        <th>Saldo actual</th>
-        <th>Fecha de creación</th>
-    </tr>
-    {% for cuenta in cuentas %}
-    <tr>
-        <td>{{ cuenta.nombre }}</td>
-        <td>{{ cuenta.get_tipo_display }}</td>
-        <td>${{ cuenta.saldo_inicial }}</td>
-        <td>${{ cuenta.saldo_actual }}</td>
-        <td>{{ cuenta.fecha_creacion }}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="4">Aún no tienes cuentas registradas.</td>
-    </tr>
-    {% endfor %}
-</table>
+<ul>
+  {% for cuenta in cuentas %}
+    <li>
+      <a href="{% url 'dashboards:detalle_cuenta' cuenta.id %}">
+        {{ cuenta.nombre }}
+      </a>Balance: ${{ balances.cuenta.id }}
+    </li>
+    <form method="post"
+            action="{% url 'dashboards:eliminar_cuenta' cuenta.id %}"
+            style="display:inline;"
+            onsubmit="return confirmarEliminacion(event)">
+        {% csrf_token %}
+        <button type="submit" style="color:red;">X</button>
+    </form>
+  {% empty %}
+    <li>No tienes cuentas registradas.</li>
+  {% endfor %}
+</ul>
+
+<script>
+function confirmarEliminacion(event) {
+  event.preventDefault();
+  const confirmacion = confirm("¿Seguro que deseas eliminar este movimiento?");
+  if (confirmacion) {
+    event.target.submit();
+  }
+}
+</script>
 
 {% endblock %}

@@ -22,11 +22,8 @@
                     <a href="#seguridad" class="list-group-item list-group-item-action" data-bs-toggle="list">
                         <i class="fas fa-lock me-2"></i>Seguridad
                     </a>
-                    <a href="#entradas" class="list-group-item list-group-item-action" data-bs-toggle="list">
-                        <i class="fas fa-file-alt me-2"></i>Mis Entradas
-                    </a>
-                    <a href="#comentarios" class="list-group-item list-group-item-action" data-bs-toggle="list">
-                        <i class="fas fa-comments me-2"></i>Mis Comentarios
+                    <a href="#finanzas" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="fas fa-file-alt me-2"></i>Mis finanzas
                     </a>
                     <a href="{% url 'users:public_profile' profile_slug=user.profile_slug %}"  class="list-group-item list-group-item-action">
                         <i class="fas fa-comments me-2"></i>Vista pública
@@ -41,9 +38,9 @@
                 <div class="card-header" style="background-color: var(--color-principal); color: var(--color-blanco);">
                     <div class="d-flex justify-content-between align-items-center">
                     {% if user.groups.first %}
-                    <h5 class="d-flex justify-content-between align-items-center">Perfil de {{ user.display_name }} <span class="badge text-bg-light">{{ user.groups.first.name }}</span></h5>
+                    <h5 class="d-flex justify-content-between align-items-center">Perfil de {{ user.display_name }}<span class="badge text-bg-light ms-2">{{ user.groups.first.name }}</span></h5>
                     {% elif user.is_superuser %}
-                    <h5 class="d-flex justify-content-between align-items-center">Perfil de {{ user.display_name }} <span class="badge bg-danger">SuperAdmin</span></h5>
+                    <h5 class="d-flex justify-content-between align-items-center">Perfil de {{ user.display_name }}<span class="badge bg-danger ms-2">SuperAdmin</span></h5>
                     {% endif %}
                     </div>
                 </div>
@@ -82,12 +79,6 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Correo electrónico</label>
-                                    {{ profile_form.email }}
-                                    <div class="form-text">El correo electrónico no puede ser modificado.</div>
-                                </div>
-
-                                <div class="mb-3">
                                     <label class="form-label fw-bold">Biografía</label>
                                     {{ profile_form.bio }}
                                 </div>
@@ -98,7 +89,6 @@
                             </form>
                         </div>
 
-                        <!-- Pestaña de Imagen de Perfil -->
                         <div class="tab-pane fade" id="imagen">
                             <div class="text-center mb-4">
                                 {% if user.profile_image %}
@@ -170,20 +160,10 @@
                                 </button>
                             </form>
                         </div>
-
-                        <!-- Pestaña de Últimas Entradas -->
-                        <div class="tab-pane fade" id="entradas">
-                            <h5 class="mb-4">Mis Publicaciones</h5>
+                        <div class="tab-pane fade" id="finanzas">
+                            <h5 class="mb-4">Mis finanzas</h5>
 
                         </div>
-
-                        <!-- Pestaña de Comentarios -->
-                        <div class="tab-pane fade" id="comentarios">
-                            <h5 class="mb-4">Mis Comentarios</h5>
-                            
-
-                        </div>
-                        
                     </div>
                 </div>
             </div>

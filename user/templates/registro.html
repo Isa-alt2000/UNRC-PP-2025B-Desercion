@@ -29,14 +29,6 @@
               <div class="text-danger">{{ form.alias.errors }}</div>
             {% endif %}
           </div>
-          
-          <div class="mb-3">
-            <label for="id_email" class="form-label">Correo electrónico</label>
-            {{ form.email|add_class:"form-control" }}
-            {% if form.email.errors %}
-              <div class="text-danger">{{ form.email.errors }}</div>
-            {% endif %}
-          </div>
 
           <div class="mb-3">
             <label for="id_password1" class="form-label">Contraseña</label>
