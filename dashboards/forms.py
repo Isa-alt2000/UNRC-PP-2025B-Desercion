@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Cuenta, Movimiento
+from .models import Cuenta, Movimiento, DatosPersonales, FactoresDesercion, PreguntasAbiertas, EstadoActual
 
 
 class CuentaForm(forms.ModelForm):
@@ -26,3 +26,10 @@ class MovimientoForm(forms.ModelForm):
         if monto < 0:
             raise ValidationError("El monto no puede ser negativo.")
         return monto
+
+
+# ENCUESTAS
+class DatosPersonalesForm(forms.ModelForm):
+    class Meta:
+        model = DatosPersonales
+        fields = ['nombre', 'edad', 'genero', 'nivel_educativo', 'situacion_laboral']

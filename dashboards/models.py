@@ -6,11 +6,48 @@ from django.conf import settings
 
 
 class DatosPersonales(models.Model):
-    nombre = models.CharField(max_length=100)
-    edad = models.IntegerField(null=True, blank=True)
-    genero = models.CharField(max_length=20, blank=True)
-    estado_civil = models.CharField(max_length=30, blank=True)
-    alcaldia = models.CharField(max_length=100, blank=True)
+    EDO_CIVIL_CHIOCES = [
+        ('SOLTERO', 'Soltero'),
+        ('CASADO', 'Casado'),
+        ('DIVORCIADO', 'Divorciado'),
+        ('VIUDO', 'Viudo'),
+        ('UNION_LIBRE', 'Union libre'),
+        ('OTRO', 'Otro'),
+    ]
+
+    ALCALDIA_CHIOCES = [
+        ('ALVARO_OBREGON', 'Alvaro Obregon'),
+        ('AZCAPOTZALCO', 'Azcapotzalco'),
+        ('BENITO_JUAREZ', 'Benito Juárez'),
+        ('COYOACAN', 'Coyoacan'),
+        ('CUAJIMALPA', 'Cuajimalpa de Morelos'),
+        ('CUAUHTEMOC', 'Cuauhtémoc'),
+        ('GUSTAVO_A_MADERO', 'Gustavo A. Madero '),
+        ('IZTACALCO', 'Iztacalco'),
+        ('IZTAPALAPA', 'Iztapalapa'),
+        ('LA_MAGDALENA_CONTRERAS', 'La Magdalena Contreras'),
+        ('MIGUEL_HIDALGO', 'Miguel Hidalgo'),
+        ('MILPA_ALTA', 'Milpa Alta'),
+        ('TLAHUAC', 'Tlahuac'),
+        ('TLALPAN', 'Tlalpan'),
+        ('VENUSTIANO_CARRANZA', 'Venustiano Carranza'),
+        ('XOCHIMILCO', 'Xochimilco'),
+        ('OTRO', 'Otro'),
+    ]
+
+    GENERO_CHOICES = [
+        ('MASCULINO', 'Masculino'),
+        ('FEMENINO', 'Femenino'),
+        ('NO_BINARIO', 'No binario'),
+        ('NO_ESPECIFICAR', 'Prefiero no especificar'),
+        ('OTRO', 'Otro'),
+    ]
+
+    nombre = models.CharField(max_length=100, null=True, blank=True)
+    edad = models.IntegerField(null=False, blank=False,)
+    genero = models.CharField(max_length=20, choices=GENERO_CHOICES, blank=False)
+    estado_civil = models.CharField(max_length=30, choices=EDO_CIVIL_CHIOCES, blank=False)
+    alcaldia = models.CharField(max_length=50, choices=ALCALDIA_CHIOCES, blank=True)
     fecha_registro = models.DateField(default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -18,16 +55,32 @@ class DatosPersonales(models.Model):
     def __str__(self):
         return self.nombre
 
+    def save(self, *args, **kwargs):
+        if self.edad < 0:
+            raise ValueError("La edad no puede ser negativa.")
+        super().save(*args, **kwargs)
+
 
 class EstadoActual(models.Model):
+    SEMESTRES_CHOICES = [(i, str(i)) for i in range(1, 7)]  # 6 tuplas usandp for en linea
+
+    OCUP_ACT_CHOICES = [
+        ('ESTUDIANDO', 'Estudiando'),
+        ('TRABAJANDO', 'Trabajando'), 
+        ('AMBOS', 'Estudiando y Trabajando'),
+        ('EMPRENDIENDO', 'Emprendiendo'),
+        ('BUSCANDO_TRABAJO', 'Buscando Trabajo'),
+        ('OTRO', 'Otro'),
+    ]
+
     persona = models.OneToOneField(
         DatosPersonales,
         on_delete=models.CASCADE,
         related_name='estado_actual'
     )
-    ultimo_sem_cursado = models.IntegerField(null=True, blank=True)
-    sem_posible_abandono = models.IntegerField(null=True, blank=True)
-    ocupacion_actual = models.CharField(max_length=100, blank=True)
+    ultimo_sem_cursado = models.IntegerField(null=False, choices=SEMESTRES_CHOICES, blank=False)
+    sem_posible_abandono = models.IntegerField(null=False, choices=SEMESTRES_CHOICES, blank=False)
+    ocupacion_actual = models.CharField(max_length=100, choices=OCUP_ACT_CHOICES, blank=True)
     trabajo_actual = models.CharField(max_length=100, blank=True)
     apoyo_actual = models.CharField(max_length=100, blank=True)
     expectativas_carrera = models.TextField(blank=True)
@@ -39,17 +92,26 @@ class EstadoActual(models.Model):
 
 
 class FactoresDesercion(models.Model):
+    IMPORTANCIA_CHOICES = [
+        ('MUY_IMPORTANTE', 'Muy importante'),
+        ('IMPORTANTE', 'Importante'),
+        ('INTERMEDIO', 'Intermedio'),
+        ('POCO_IMPORTANTE', 'Poco importante'),
+        ('NO_IMPORTANTE', 'No importante'),
+    ]
+
     persona = models.OneToOneField(
         DatosPersonales,
         on_delete=models.CASCADE,
         related_name='factores_desercion'
     )
-    rendimiento = models.TextField(blank=True)
-    financieros = models.TextField(blank=True)
-    personales = models.TextField(blank=True)
-    costos = models.TextField(blank=True)
-    salud_mental = models.TextField(blank=True)
-    falta_apoyo = models.TextField(blank=True)
+
+    rendimiento = models.TextField(blank=False, null=False, choices=IMPORTANCIA_CHOICES)
+    financieros = models.TextField(blank=False, null=False, choices=IMPORTANCIA_CHOICES)
+    personales = models.TextField(blank=False, null=False, choices=IMPORTANCIA_CHOICES)
+    costos = models.TextField(blank=False, null=False, choices=IMPORTANCIA_CHOICES)
+    salud_mental = models.TextField(blank=False, null=False, choices=IMPORTANCIA_CHOICES)
+    falta_apoyo = models.TextField(blank=False, null=False, choices=IMPORTANCIA_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -89,6 +89,7 @@ def eliminar_movimiento(request, cuenta_id, movimiento_id):
 
     return redirect('dashboards:detalle_cuenta', cuenta_id=cuenta.id)
 
+
 @login_required
 def editar_movimiento(request, cuenta_id, movimiento_id):
     cuenta = get_object_or_404(Cuenta, id=cuenta_id, usuario=request.user)

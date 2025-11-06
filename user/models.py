@@ -20,7 +20,7 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-    @property 
+    @property
     def display_name(self):
         return self.alias or self.username
 
