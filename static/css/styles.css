@@ -1,0 +1,45 @@
+:root {
+  --color-principal: #9F2241;
+  --color-secundario: #BC955C;
+  --color-blanco: #ffffff;
+}
+
+    body {
+      background-color: var(--color-blanco);
+    }
+    .navbar-custom {
+      background-color: var(--color-principal);
+    }
+    .navbar-custom .nav-link,
+    .navbar-custom .navbar-brand {
+      color: var(--color-blanco);
+    }
+    .btn-principal {
+      background-color: var(--color-principal);
+      color: var(--color-blanco);
+      border: none;
+    }
+    .btn-principal:hover {
+      background-color: #7c1b34; /* tono más oscuro */
+    }
+    .btn-secundario {
+      background-color: var(--color-secundario);
+      color: var(--color-blanco);
+      border: none;
+    }
+    .btn-secundario:hover {
+      background-color: #a37d4e;
+    }
+
+/* Bootstrap*/
+.hero-section.bg-primary {
+  background-color: var(--color-principal) !important;
+  color: var(--color-blanco) !important;
+}
+
+.hero-section .btn-light {
+  background-color: var(--color-blanco) !important;
+  color: var(--color-principal) !important;
+  border: none !important;
+}
+

@@ -1,9 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Inicio{% endblock %}
 
 {% block content %}
 <div class="text-center">
-  <h2>Bienvenido/a {{ user.alias }} 👋</h2>
+  <h2>Bienvenido/a {{ user.alias }}! 👋</h2>
   {% if user.is_authenticated %}
     <p class="lead">Has iniciado sesión como <strong>@{{ user.username }}</
   {% else %}
@@ -16,14 +17,14 @@
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <h1 class="display-4 fw-bold mb-3">Bienvenido/a</h1>
-                <p class="lead mb-4">Placeholder</p>
+                <p class="lead mb-4">Proyecto prototípico 2025-B: Deserción universitaria.</p>
                 <div class="d-flex gap-3">
                     {% if user.is_authenticated %}
                         <a href="{% url 'dashboards:lista_cuentas' %}" class="btn btn-light btn-lg">
                             <i class="fas fa-plus me-2"></i>Ver mis finanzas
                         </a>
                         <a href="#" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-comments me-2"></i>Calcular finanzas
+                            <i class="fas fa-comments me-2"></i>Ver reporte
                         </a>
                         <a href="#" class="btn btn-outline-light btn-lg">
                             <i class="fas fa-user-plus me-2"></i>Contesta una encuesta
@@ -42,280 +43,27 @@
                 </div>
             </div>
             <div class="col-lg-6 text-center">
-                <img src="#" 
-                     alt="Comunidad" class="img-fluid rounded-3">
+             <img src="{% static 'images/campus.jpg' %}" 
+                 alt="campus-coyoacan" class="img-fluid rounded-3">
             </div>
         </div>
     </div>
 </section>
 
-<!-- Featured Posts -->
 <section class="featured-posts mb-5">
     <div class="container">
         <div class="row mb-4">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2 class="h3">Publicaciones Destacadas</h2>
+                    <h2 class="h3">Deserción universitaria en la UNRC</h2>
                     <a href="#" class="btn btn-outline-primary">
-                        Ver Todas <i class="fas fa-arrow-right ms-2"></i>
+                        Ver Más <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
         </div>
-
-        <div class="row">
-            {% for post in featured_posts %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100 post-card shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="badge bg-primary">Destacado</span>
-                            <small class="text-muted">{{ post.created_at|timesince }}</small>
-                        </div>
-                        
-                        <h5 class="card-title">
-                            <a href="{% url 'post_detail' post.slug %}" class="text-decoration-none text-dark">
-                                {{ post.title }}
-                            </a>
-                        </h5>
-                        
-                        <p class="card-text text-muted">
-                            {{ post.excerpt }}
-                        </p>
-                        
-                        <div class="d-flex align-items-center">
-                            <img src="{{ post.author.profile_image.url }}" 
-                                 class="rounded-circle me-2" width="30" height="30"
-                                 style="object-fit: cover;"
-                                 onerror="this.src='https://via.placeholder.com/30'">
-                            <small class="text-muted">{{ post.author.display_name }}</small>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex gap-3">
-                                <span class="text-muted small">
-                                    <i class="fas fa-eye me-1">Visitas: </i>{{ post.view_count }}
-                                </span>
-                                <span class="text-muted small">
-                                    <i class="fas fa-comment me-1">Comentarios: </i>{{ post.comment_count }}
-                                </span>
-                                <span class="text-muted small">
-                                    <i class="fas fa-heart me-1">Me gusta: </i>{{ post.likes.count }}
-                                </span>
-                            </div>
-                            <span class="like-btn text-muted" data-slug="{{ post.slug }}">
-                                <i class="far fa-heart"></i>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-12 text-center py-5">
-                <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
-                <p class="text-muted">No hay publicaciones destacadas aún.</p>
-            </div>
-            {% endfor %}
-        </div>
     </div>
 </section>
-
-<!-- Recent Forum Topics -->
-<section class="forum-topics mb-5">
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h2 class="h3">Temas Recientes </h2>
-                    <a href="#" class="btn btn-outline-primary">
-                        Ver Publicaciones completas <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body p-0">
-                        {% for topic in recent_topics %}
-                        <div class="border-bottom p-4 {% if forloop.last %}border-bottom-0{% endif %}">
-                            <div class="d-flex align-items-start">
-                                <img src="{{ topic.author.profile_image.url }}" 
-                                     class="rounded-circle me-3" width="40" height="40"
-                                     style="object-fit: cover;"
-                                     onerror="this.src='https://via.placeholder.com/40'">
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">
-                                        <a href="#" class="text-decoration-none">{{ topic.title }}</a>
-                                        {% if topic.is_pinned %}
-                                            <i class="fas fa-thumbtack text-warning ms-2"></i>
-                                        {% endif %}
-                                    </h6>
-                                    <p class="text-muted mb-2 small">
-                                        Por {{ topic.author.display_name }} • 
-                                        {{ topic.created_at|timesince }} • 
-                                        {{ topic.view_count }} vistas
-                                    </p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            {% for tag in topic.tags.all|slice:":3" %}
-                                                <span class="badge bg-secondary me-1">{{ tag.name }}</span>
-                                            {% endfor %}
-                                        </div>
-                                        <span class="text-muted small">
-                                            <i class="fas fa-comment me-1"></i>
-                                            {{ topic.comment_count }} respuestas
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <div class="text-center py-5">
-                            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No hay temas aún.</p>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Categories/Features Section -->
-<section class="features-section py-5 bg-light">
-    <div class="container">
-        <div class="row text-center mb-5">
-            <div class="col-12">
-                <h2 class="h2 mb-3">TItulo</h2>
-                <p class="lead text-muted">descripcion</p>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 border-0 text-center">
-                    <div class="card-body">
-                        <div class="feature-icon mb-3">
-                            <i class="fas fa-users fa-3x text-primary"></i>
-                        </div>
-                        <h5 class="card-title">titulo</h5>
-                        <p class="card-text text-muted">
-                            {% lorem 2 b random %}
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 border-0 text-center">
-                    <div class="card-body">
-                        <div class="feature-icon mb-3">
-                            <i class="fas fa-graduation-cap fa-3x text-primary"></i>
-                        </div>
-                        <h5 class="card-title">titulo2</h5>
-                        <p class="card-text text-muted">
-                            {% lorem 2 b random %}
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 border-0 text-center">
-                    <div class="card-body">
-                        <div class="feature-icon mb-3">
-                            <i class="fas fa-rocket fa-3x text-primary"></i>
-                        </div>
-                        <h5 class="card-title">titulo3</h5>
-                        <p class="card-text text-muted">
-                            {% lorem 2 b random %}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Recent Activity -->
-<section class="recent-activity py-5">
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <h2 class="h3">Actividad Reciente</h2>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h6 class="mb-0">Últimos Comentarios</h6>
-                    </div>
-                    <div class="card-body">
-                        {% for comment in recent_comments %}
-                        <div class="d-flex align-items-start mb-3 {% if not forloop.last %}pb-3 border-bottom{% endif %}">
-                            <img src="{{ comment.author.profile_image.url }}" 
-                                 class="rounded-circle me-3" width="35" height="35"
-                                 style="object-fit: cover;"
-                                 onerror="this.src='https://via.placeholder.com/35'">
-                            <div class="flex-grow-1">
-                                <p class="mb-1 small">{{ comment.content|truncatewords:15 }}</p>
-                                <small class="text-muted">
-                                    Por {{ comment.author.display_name }} en 
-                                    <a href="{% url 'post_detail' comment.post.slug %}" class="text-decoration-none">
-                                        {{ comment.post.title|truncatewords:3 }}
-                                    </a>
-                                </small>
-                                <br>
-                                <small class="text-muted">{{ comment.created_at|timesince }}</small>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p class="text-muted text-center py-3">No hay comentarios recientes.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h6 class="mb-0">Usuarios Activos</h6>
-                    </div>
-                    <div class="card-body">
-                        {% for user in active_users %}
-                        <div class="d-flex align-items-center mb-3 {% if not forloop.last %}pb-3 border-bottom{% endif %}">
-                            {% if user.profile_image and user.profile_image.url %}
-                                <img src="{{ user.profile_image.url }}" 
-                                    class="rounded-circle me-3" width="40" height="40"
-                                    style="object-fit: cover;">
-                            {% else %}
-                                <img src="https://via.placeholder.com/40/6c757d/ffffff?text=👤" 
-                                    class="rounded-circle me-3" width="40" height="40"
-                                    style="object-fit: cover;">
-                            {% endif %}
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0">{{ user.display_name }}</h6>
-                                <small class="text-muted">@{{ user.username }}</small>
-                            </div>
-                            <span class="badge bg-primary">{{ user.post_count }} posts</span>
-                        </div>
-                        {% empty %}
-                        <p class="text-muted text-center py-3">No hay usuarios activos.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Newsletter Signup -->
 
 {% endblock %}
 
