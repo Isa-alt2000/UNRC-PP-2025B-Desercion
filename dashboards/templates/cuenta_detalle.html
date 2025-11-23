@@ -13,7 +13,7 @@
           <h2 class="card-title mb-2">{{ cuenta.nombre }}</h2>
           <p class="card-text text-muted mb-2">{{ cuenta.descripcion }}</p>
           <h4 class="mb-0">
-            <span class="badge bg-secondary">Balance: ${{ balance }}</span>
+            <span class="badge bg-secundario">Balance: ${{ balance }}</span>
           </h4>
         </div>
         <div>
@@ -126,7 +126,24 @@
                 <td class="text-center">
                   <div class="btn-group" role="group">
                     <button
-                      onclick="editarMovimiento('{{ mov.id }}', '{{ mov.concepto }}', '{{ mov.tipo }}', '{{ mov.monto }}', '{{ mov.fecha|date:'Y-m-d' }}')"
+                      class="btn btn-square btn-outline-secundario"
+                      type="button"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title="{{ mov.descripcion|default:'Sin descripción'|striptags }}"
+                      aria-label="Descripción">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm1,15a1,1,0,0,1-2,0V11a1,1,0,0,1,2,0ZM12,8a1.5,1.5,0,1,1,1.5-1.5A1.5,1.5,0,0,1,12,8Z"/>
+                      </svg>
+                    </button>
+                    <button
+                      onclick="editarMovimiento(this)"
+                      data-id="{{ mov.id }}"
+                      data-concepto="{{ mov.concepto|escapejs }}"
+                      data-tipo="{{ mov.tipo }}"
+                      data-monto="{{ mov.monto }}"
+                      data-fecha="{{ mov.fecha|date:'Y-m-d' }}"
+                      data-descripcion="{{ mov.descripcion|default:''|escapejs }}"
                       class="btn btn-square btn-outline-primary"
                       title="Editar" aria-label="Editar">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -138,7 +155,7 @@
                       style="display:inline;"
                       onsubmit="return confirmarEliminacion(event)">
                       {% csrf_token %}
-                      <button type="submit" class="btn btn-square btn-outline-danger" title="Eliminar" aria-label="Eliminar">
+                      <button type="submit" class="btn btn-square btn-outline-primary" title="Eliminar" aria-label="Eliminar">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                           <path d="M5.755 20.283 4 8h16l-1.755 12.283A2 2 0 0 1 16.265 22h-8.53a2 2 0 0 1-1.98-1.717zM21 4h-5V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v1H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2z"/>
                         </svg>
@@ -163,7 +180,7 @@
 
   <!-- Botón volver -->
   <div class="mt-4 mb-5">
-    <a href="{% url 'dashboards:lista_cuentas' %}" class="btn btn-outline-secondary">
+    <a href="{% url 'dashboards:lista_cuentas' %}" class="btn btn-secundario">
       <i class="bi bi-arrow-left me-2"></i>Volver
     </a>
   </div>
@@ -185,21 +202,47 @@ function abrirModal() {
     modal.show();
 }
 
-function editarMovimiento(id, concepto, tipo, monto, fecha) {
-    const modal = new bootstrap.Modal(document.getElementById('movimientoModal'));
-    document.getElementById('modalTitle').textContent = 'Editar Movimiento';
-    
-    // Actualizar el formulario con los datos existentes
-    document.getElementById('id_concepto').value = concepto;
-    document.getElementById('id_tipo').value = tipo;
-    document.getElementById('id_monto').value = monto;
-    document.getElementById('id_fecha').value = fecha;
-    
-    // Cambiar la URL del formulario para edición
-    document.getElementById('movimientoForm').setAttribute('action', 
-        '{% url "dashboards:detalle_cuenta" cuenta.id %}' + 'editar-movimiento/' + id + '/');
-    
-    modal.show();
+function editarMovimiento(btn) {
+  const modal = new bootstrap.Modal(document.getElementById('movimientoModal'));
+  document.getElementById('modalTitle').textContent = 'Editar Movimiento';
+
+  // Leer datos desde data-attributes del botón
+  const id = btn.getAttribute('data-id');
+  const concepto = btn.getAttribute('data-concepto') || '';
+  const tipo = btn.getAttribute('data-tipo') || '';
+  const monto = btn.getAttribute('data-monto') || '';
+  const fecha = btn.getAttribute('data-fecha') || '';
+  const descripcion = btn.getAttribute('data-descripcion') || '';
+
+  // Actualizar el formulario con los datos existentes
+  const conceptoEl = document.getElementById('id_concepto');
+  if (conceptoEl) conceptoEl.value = concepto;
+  const tipoEl = document.getElementById('id_tipo');
+  if (tipoEl) tipoEl.value = tipo;
+  const montoEl = document.getElementById('id_monto');
+  if (montoEl) montoEl.value = monto;
+  const fechaEl = document.getElementById('id_fecha');
+  if (fechaEl) fechaEl.value = fecha;
+  const descEl = document.getElementById('id_descripcion');
+  if (descEl) descEl.value = descripcion;
+
+  // Cambiar la URL del formulario para edición
+  document.getElementById('movimientoForm').setAttribute('action',
+    '{% url "dashboards:detalle_cuenta" cuenta.id %}' + 'editar-movimiento/' + id + '/');
+
+  modal.show();
 }
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.forEach(function (el) {
+    try {
+      new bootstrap.Tooltip(el);
+    } catch (e) {
+      // ignore if bootstrap not available
+    }
+  });
+});
 </script>
 {% endblock %}
