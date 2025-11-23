@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.db.models import Sum
 from django.contrib import messages
 from .models import Cuenta, Movimiento
@@ -9,12 +10,20 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def lista_cuentas(request):
     cuentas = Cuenta.objects.filter(usuario=request.user)
-    balances = {}
     for cuenta in cuentas:
-        ingresos = cuenta.movimientos.filter(tipo='INGRESO').aggregate(Sum('monto'))['monto__sum'] or 0
-        egresos = cuenta.movimientos.filter(tipo='EGRESO').aggregate(Sum('monto'))['monto__sum'] or 0
-        balances[cuenta.id] = ingresos - egresos
-    return render(request, 'cuentas_lista.html', {'cuentas': cuentas, 'balances': balances})
+        ingresos_q = cuenta.movimientos.filter(tipo='INGRESO').aggregate(Sum('monto'))
+        ingresos = ingresos_q.get('monto__sum') or 0
+        egresos_q = cuenta.movimientos.filter(tipo='EGRESO').aggregate(Sum('monto'))
+        egresos = egresos_q.get('monto__sum') or 0
+        cuenta.balance = ingresos - egresos
+
+    form = CuentaForm()
+    form_action = reverse('dashboards:crear_cuenta')
+    return render(request, 'cuentas_lista.html', {
+        'cuentas': cuentas,
+        'form': form,
+        'form_action': form_action,
+    })
 
 
 @login_required
@@ -26,8 +35,23 @@ def crear_cuenta(request):
             cuenta.usuario = request.user
             cuenta.save()
             return redirect('dashboards:lista_cuentas')
+        else:
+            cuentas = Cuenta.objects.filter(usuario=request.user)
+            for cuenta in cuentas:
+                ingresos_q = cuenta.movimientos.filter(tipo='INGRESO').aggregate(Sum('monto'))
+                ingresos = ingresos_q.get('monto__sum') or 0
+                egresos_q = cuenta.movimientos.filter(tipo='EGRESO').aggregate(Sum('monto'))
+                egresos = egresos_q.get('monto__sum') or 0
+                cuenta.balance = ingresos - egresos
+
+            return render(request, 'cuentas_lista.html', {
+                'cuentas': cuentas,
+                'form': form,
+                'open_modal': True,
+            })
     else:
         form = CuentaForm()
+
     return render(request, 'cuenta_form.html', {'form': form})
 
 
@@ -36,8 +60,10 @@ def detalle_cuenta(request, cuenta_id):
     cuenta = get_object_or_404(Cuenta, id=cuenta_id, usuario=request.user)
     movimientos = cuenta.movimientos.all().order_by('-fecha')
 
-    ingresos = cuenta.movimientos.filter(tipo='INGRESO').aggregate(Sum('monto'))['monto__sum'] or 0
-    egresos = cuenta.movimientos.filter(tipo='EGRESO').aggregate(Sum('monto'))['monto__sum'] or 0
+    ingresos_q = cuenta.movimientos.filter(tipo='INGRESO').aggregate(Sum('monto'))
+    ingresos = ingresos_q.get('monto__sum') or 0
+    egresos_q = cuenta.movimientos.filter(tipo='EGRESO').aggregate(Sum('monto'))
+    egresos = egresos_q.get('monto__sum') or 0
     balance = ingresos - egresos
 
     form = MovimientoForm()
@@ -105,3 +131,36 @@ def editar_movimiento(request, cuenta_id, movimiento_id):
         form = MovimientoForm(instance=movimiento)
 
     return redirect('dashboards:detalle_cuenta', cuenta_id=cuenta.id)
+
+
+@login_required
+def editar_cuenta(request, cuenta_id):
+    cuenta = get_object_or_404(Cuenta, id=cuenta_id, usuario=request.user)
+
+    if request.method == 'POST':
+        form = CuentaForm(request.POST, instance=cuenta)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Cuenta actualizada correctamente.")
+            return redirect('dashboards:lista_cuentas')
+        else:
+            # Si hay errores al editar, renderizamos la lista y abrimos el modal
+            cuentas = Cuenta.objects.filter(usuario=request.user)
+            for c in cuentas:
+                ingresos_q = c.movimientos.filter(tipo='INGRESO').aggregate(Sum('monto'))
+                ingresos = ingresos_q.get('monto__sum') or 0
+                egresos_q = c.movimientos.filter(tipo='EGRESO').aggregate(Sum('monto'))
+                egresos = egresos_q.get('monto__sum') or 0
+                c.balance = ingresos - egresos
+
+            form_action = reverse('dashboards:editar_cuenta', args=[cuenta.id])
+            return render(request, 'cuentas_lista.html', {
+                'cuentas': cuentas,
+                'form': form,
+                'form_action': form_action,
+                'open_modal': True,
+            })
+    else:
+        form = CuentaForm(instance=cuenta)
+
+    return render(request, 'cuenta_form.html', {'form': form, 'cuenta': cuenta})

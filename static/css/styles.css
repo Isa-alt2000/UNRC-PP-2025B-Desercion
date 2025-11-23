@@ -4,32 +4,32 @@
   --color-blanco: #ffffff;
 }
 
-    body {
-      background-color: var(--color-blanco);
-    }
-    .navbar-custom {
-      background-color: var(--color-principal);
-    }
-    .navbar-custom .nav-link,
-    .navbar-custom .navbar-brand {
-      color: var(--color-blanco);
-    }
-    .btn-principal {
-      background-color: var(--color-principal);
-      color: var(--color-blanco);
-      border: none;
-    }
-    .btn-principal:hover {
-      background-color: #7c1b34; /* tono más oscuro */
-    }
-    .btn-secundario {
-      background-color: var(--color-secundario);
-      color: var(--color-blanco);
-      border: none;
-    }
-    .btn-secundario:hover {
-      background-color: #a37d4e;
-    }
+body {
+  background-color: var(--color-blanco);
+}
+.navbar-custom {
+  background-color: var(--color-principal);
+}
+.navbar-custom .nav-link,
+.navbar-custom .navbar-brand {
+  color: var(--color-blanco);
+}
+.btn-principal {
+  background-color: var(--color-principal);
+  color: var(--color-blanco);
+  border: none;
+}
+.btn-principal:hover {
+  background-color: #7c1b34;
+}
+.btn-secundario {
+  background-color: var(--color-secundario);
+  color: var(--color-blanco);
+  border: none;
+}
+.btn-secundario:hover {
+  background-color: #a37d4e;
+}
 
 /* Bootstrap*/
 .hero-section.bg-primary {
@@ -43,3 +43,212 @@
   border: none !important;
 }
 
+.card-add-hover {
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border: 2px dashed var(--color-secundario) !important;
+}
+
+.card-add-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  border-color: var(--color-principal) !important;
+}
+
+.card-add-hover .add-icon {
+  color: var(--color-secundario);
+  transition: all 0.3s ease;
+}
+
+.card-add-hover:hover .add-icon {
+  color: var(--color-principal);
+  transform: scale(1.1);
+}
+
+.card-cuenta-hover {
+  transition: all 0.3s ease;
+}
+
+.card-cuenta-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(159, 34, 65, 0.15) !important;
+}
+
+.btn-principal {
+  transition: all 0.3s ease;
+}
+
+.btn-principal:hover {
+  transform: scale(1.02);
+}
+
+.btn-principal {
+  background-color: var(--color-principal) !important;
+  border-color: var(--color-principal) !important;
+  color: var(--color-blanco) !important;
+}
+
+.btn-principal:hover,
+.btn-principal:focus,
+.btn-principal:active {
+  background-color: #7c1b34 !important;
+  border-color: #7c1b34 !important;
+  color: var(--color-blanco) !important;
+}
+
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.dropdown-item.text-danger:hover {
+  background-color: #fff5f5;
+}
+
+.table-ingreso {
+  background-color: #d4edda !important;
+}
+
+.table-egreso {
+  background-color: #f8d7da !important;
+}
+
+.table-hover tbody tr.table-ingreso:hover {
+  background-color: #c3e6cb !important;
+}
+
+.table-hover tbody tr.table-egreso:hover {
+  background-color: #f5c6cb !important;
+}
+
+.bg-success-custom {
+  background-color: #28a745 !important;
+}
+
+.bg-danger-custom {
+  background-color: #dc3545 !important;
+}
+
+.text-success-custom {
+  color: #28a745 !important;
+}
+
+.text-danger-custom {
+  color: #dc3545 !important;
+}
+
+.card {
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.table th {
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.btn-group .btn {
+  border-radius: 0.25rem;
+}
+
+.btn-group .btn:first-child {
+  margin-right: 4px;
+}
+
+/* Modal form overrides (force Bootstrap colors to app palette) */
+.modal .form-label {
+  color: var(--color-principal) !important;
+  font-weight: 600 !important;
+}
+
+.modal .form-control {
+  border-radius: 0.375rem !important;
+}
+
+.modal textarea.form-control {
+  min-height: 140px !important;
+}
+
+.modal .btn-principal {
+  background-color: var(--color-principal) !important;
+  border-color: var(--color-principal) !important;
+  color: var(--color-blanco) !important;
+}
+
+.modal .btn-principal:hover,
+.modal .btn-principal:focus {
+  background-color: #7c1b34 !important;
+  border-color: #7c1b34 !important;
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 .25rem rgba(159,34,65,0.12) !important;
+  border-color: var(--color-principal) !important;
+}
+
+/* Specific styling for the account modal so edit uses app palette */
+#cuentaModal .modal-title {
+  color: var(--color-principal) !important;
+}
+
+#cuentaModal .modal-header {
+  border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+}
+
+#cuentaModal .modal-content {
+  border: 1px solid rgba(0,0,0,0.04) !important;
+}
+
+#cuentaModal .btn-principal {
+  background-color: var(--color-principal) !important;
+  border-color: var(--color-principal) !important;
+  color: var(--color-blanco) !important;
+}
+
+#cuentaModal .btn-principal:hover,
+#cuentaModal .btn-principal:focus {
+  background-color: #7c1b34 !important;
+  border-color: #7c1b34 !important;
+}
+
+/* Square rounded icon buttons used for actions */
+.btn-square {
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 0.6rem !important;
+}
+
+.btn-square svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* Outline primary/danger variants keep their outline but match hover palette */
+.btn-square.btn-outline-primary {
+  color: var(--color-principal) !important;
+  border-color: var(--color-principal) !important;
+  background-color: transparent !important;
+}
+.btn-square.btn-outline-primary:hover,
+.btn-square.btn-outline-primary:focus {
+  background-color: rgba(159,34,65,0.08) !important;
+}
+
+.btn-square.btn-outline-danger {
+  color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  background-color: transparent !important;
+}
+.btn-square.btn-outline-danger:hover,
+.btn-square.btn-outline-danger:focus {
+  background-color: rgba(220,53,69,0.08) !important;
+}

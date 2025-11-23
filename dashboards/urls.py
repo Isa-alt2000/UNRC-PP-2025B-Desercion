@@ -11,4 +11,5 @@ urlpatterns = [
     path('cuentas/<int:cuenta_id>/nuevo-movimiento/', finanzas.agregar_movimiento, name='agregar_movimiento'),
     path('cuentas/<int:cuenta_id>/movimiento/<int:movimiento_id>/eliminar/', finanzas.eliminar_movimiento, name='eliminar_movimiento'),
     path('cuentas/<int:cuenta_id>/editar-movimiento/<int:movimiento_id>/', finanzas.editar_movimiento, name='editar_movimiento'),
+    path('cuentas/<int:cuenta_id>/editar/', finanzas.editar_cuenta, name='editar_cuenta'),
 ]

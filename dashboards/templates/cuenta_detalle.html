@@ -4,62 +4,170 @@
 {% block title %}Detalle de la cuenta{% endblock %}
 
 {% block content %}
-<h2>{{ cuenta.nombre }}</h2>
-<p>{{ cuenta.descripcion }}</p>
-<p><strong>Balance:</strong> ${{ balance }}</p>
-
-<button type="button" onclick="abrirModal()">Agregar movimiento</button>
-
-<div id="movimientoModal" class="modal" style="display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4);">
-    <div class="modal-content" style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px;">
-        <span class="close" onclick="cerrarModal()" style="float: right; cursor: pointer;">&times;</span>
-        <h3 id="modalTitle">Agregar Movimiento</h3>
-        <form method="post" id="movimientoForm">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Guardar</button>
-        </form>
+<div class="container mt-4">
+  <!-- Encabezado de la cuenta -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start flex-wrap">
+        <div class="mb-3 mb-md-0">
+          <h2 class="card-title mb-2">{{ cuenta.nombre }}</h2>
+          <p class="card-text text-muted mb-2">{{ cuenta.descripcion }}</p>
+          <h4 class="mb-0">
+            <span class="badge bg-secondary">Balance: ${{ balance }}</span>
+          </h4>
+        </div>
+        <div>
+          <button type="button" class="btn btn-principal btn-lg" onclick="abrirModal()">
+            <i class="bi bi-plus-circle me-2"></i>Agregar movimiento
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="modal fade" id="movimientoModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle">Agregar Movimiento</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" id="movimientoForm">
+            {% csrf_token %}
+            <div class="container-fluid">
+              <div class="row g-3">
+                <div class="col-12 col-md-4">
+                  <label for="id_tipo" class="form-label">Tipo</label>
+                  {{ form.tipo }}
+                  {% if form.tipo.errors %}
+                    <div class="invalid-feedback d-block">{{ form.tipo.errors|striptags }}</div>
+                  {% endif %}
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label for="id_monto" class="form-label">Monto</label>
+                  {{ form.monto }}
+                  {% if form.monto.errors %}
+                    <div class="invalid-feedback d-block">{{ form.monto.errors|striptags }}</div>
+                  {% endif %}
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label for="id_fecha" class="form-label">Fecha</label>
+                  {{ form.fecha }}
+                  {% if form.fecha.errors %}
+                    <div class="invalid-feedback d-block">{{ form.fecha.errors|striptags }}</div>
+                  {% endif %}
+                </div>
+
+                <div class="col-12">
+                  <label for="id_concepto" class="form-label">Concepto</label>
+                  {{ form.concepto }}
+                  {% if form.concepto.errors %}
+                    <div class="invalid-feedback d-block">{{ form.concepto.errors|striptags }}</div>
+                  {% endif %}
+                </div>
+
+                <div class="col-12">
+                  <label for="id_descripcion" class="form-label">Descripción</label>
+                  {{ form.descripcion }}
+                  {% if form.descripcion.errors %}
+                    <div class="invalid-feedback d-block">{{ form.descripcion.errors|striptags }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" form="movimientoForm" class="btn btn-principal">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-white">
+      <h5 class="mb-0">Movimientos</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Fecha</th>
+              <th>Concepto</th>
+              <th>Tipo</th>
+              <th class="text-end">Monto</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for mov in movimientos %}
+              <tr class="{% if mov.tipo == 'INGRESO' %}table-ingreso{% else %}table-egreso{% endif %}">
+                <td>{{ mov.fecha }}</td>
+                <td>{{ mov.concepto }}</td>
+                <td>
+                  {% if mov.tipo == 'INGRESO' %}
+                    <span class="badge bg-success-custom">Ingreso</span>
+                  {% else %}
+                    <span class="badge bg-danger-custom">Egreso</span>
+                  {% endif %}
+                </td>
+                <td class="text-end fw-bold">
+                  {% if mov.tipo == 'INGRESO' %}
+                    <span class="text-success-custom">+${{ mov.monto }}</span>
+                  {% else %}
+                    <span class="text-danger-custom">-${{ mov.monto }}</span>
+                  {% endif %}
+                </td>
+                <td class="text-center">
+                  <div class="btn-group" role="group">
+                    <button
+                      onclick="editarMovimiento('{{ mov.id }}', '{{ mov.concepto }}', '{{ mov.tipo }}', '{{ mov.monto }}', '{{ mov.fecha|date:'Y-m-d' }}')"
+                      class="btn btn-square btn-outline-primary"
+                      title="Editar" aria-label="Editar">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M20.548 3.452a1.542 1.542 0 0 1 0 2.182l-7.636 7.636-3.273 1.091 1.091-3.273 7.636-7.636a1.542 1.542 0 0 1 2.182 0zM4 21h15a1 1 0 0 0 1-1v-8a1 1 0 0 0-2 0v7H5V6h7a1 1 0 0 0 0-2H4a1 1 0 0 0-1 1v15a1 1 0 0 0 1 1z"/>
+                      </svg>
+                    </button>
+                    <form method="post"
+                      action="{% url 'dashboards:eliminar_movimiento' cuenta.id mov.id %}"
+                      style="display:inline;"
+                      onsubmit="return confirmarEliminacion(event)">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-square btn-outline-danger" title="Eliminar" aria-label="Eliminar">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path d="M5.755 20.283 4 8h16l-1.755 12.283A2 2 0 0 1 16.265 22h-8.53a2 2 0 0 1-1.98-1.717zM21 4h-5V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v1H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2z"/>
+                        </svg>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5" class="text-center py-4 text-muted">
+                  <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                  No hay movimientos aún.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón volver -->
+  <div class="mt-4 mb-5">
+    <a href="{% url 'dashboards:lista_cuentas' %}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left me-2"></i>Volver
+    </a>
+  </div>
 </div>
-
-<table border="1">
-  <tr>
-    <th>Fecha</th>
-    <th>Concepto</th>
-    <th>Tipo</th>
-    <th>Monto</th>
-  </tr>
-  {% for mov in movimientos %}
-      {% if mov.tipo == 'INGRESO' %}
-        <tr style="background-color: #d4edda;">
-          <td>{{ mov.fecha }}</td>
-          <td>{{ mov.concepto }}</td>
-          <td>{{ mov.tipo }}</td>
-          <td>${{ mov.monto }}</td>
-      {% else %}
-        <tr style="background-color: #f8d7da;">
-          <td>{{ mov.fecha }}</td>
-          <td>{{ mov.concepto }}</td>
-          <td>{{ mov.tipo }}</td>
-          <td>$-{{ mov.monto }}</td>
-      {% endif %}
-          <td>
-            <button onclick="editarMovimiento('{{ mov.id }}', '{{ mov.concepto }}', '{{ mov.tipo }}', '{{ mov.monto }}', '{{ mov.fecha|date:'Y-m-d' }}')" style="margin-right: 5px;">editar</button>
-            <form method="post"
-            action="{% url 'dashboards:eliminar_movimiento' cuenta.id mov.id %}"
-            style="display:inline;"
-            onsubmit="return confirmarEliminacion(event)">
-              {% csrf_token %}
-              <button type="submit" style="color:red;">X</button>
-            </form>
-          </td>
-        </tr>
-  {% empty %}
-  <tr><td colspan="3">No hay movimientos aún.</td></tr>
-  {% endfor %}
-</table>
-
-<a href="{% url 'dashboards:lista_cuentas' %}">Volver</a>
 
 <script>
 function confirmarEliminacion(event) {
@@ -71,18 +179,14 @@ function confirmarEliminacion(event) {
 }
 
 function abrirModal() {
-    document.getElementById('movimientoModal').style.display = 'block';
+    const modal = new bootstrap.Modal(document.getElementById('movimientoModal'));
     document.getElementById('modalTitle').textContent = 'Agregar Movimiento';
     document.getElementById('movimientoForm').setAttribute('action', '{% url "dashboards:agregar_movimiento" cuenta.id %}');
-}
-
-function cerrarModal() {
-    document.getElementById('movimientoModal').style.display = 'none';
-    document.getElementById('movimientoForm').reset();
+    modal.show();
 }
 
 function editarMovimiento(id, concepto, tipo, monto, fecha) {
-    document.getElementById('movimientoModal').style.display = 'block';
+    const modal = new bootstrap.Modal(document.getElementById('movimientoModal'));
     document.getElementById('modalTitle').textContent = 'Editar Movimiento';
     
     // Actualizar el formulario con los datos existentes
@@ -94,13 +198,8 @@ function editarMovimiento(id, concepto, tipo, monto, fecha) {
     // Cambiar la URL del formulario para edición
     document.getElementById('movimientoForm').setAttribute('action', 
         '{% url "dashboards:detalle_cuenta" cuenta.id %}' + 'editar-movimiento/' + id + '/');
-}
-
-// Cerrar modal si se hace clic fuera de él
-window.onclick = function(event) {
-    if (event.target == document.getElementById('movimientoModal')) {
-        cerrarModal();
-    }
+    
+    modal.show();
 }
 </script>
 {% endblock %}
