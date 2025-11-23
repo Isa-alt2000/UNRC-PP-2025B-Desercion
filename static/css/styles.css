@@ -138,6 +138,25 @@ body {
   color: var(--color-blanco) !important;
 }
 
+/* MENSAJES DJANGO */
+.app-messages-container {
+  background: transparent;
+}
+.app-messages-container .alert-secundario {
+  background-color: var(--color-secundario) !important;
+  color: var(--color-blanco) !important;
+  border: none !important;
+  margin-bottom: 0.5rem !important;
+}
+.app-messages-container .alert-secundario a {
+  color: var(--color-blanco) !important;
+  text-decoration: underline !important;
+}
+.app-messages-container .btn-close-white {
+  filter: invert(100%) brightness(200%);
+  opacity: 0.9;
+}
+
 .text-success-custom {
   color: #28a745 !important;
 }
