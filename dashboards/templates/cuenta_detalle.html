@@ -107,7 +107,7 @@
           <tbody>
             {% for mov in movimientos %}
               <tr class="{% if mov.tipo == 'INGRESO' %}table-ingreso{% else %}table-egreso{% endif %}">
-                <td>{{ mov.fecha }}</td>
+                <td>{{ mov.fecha|date:"j M. Y" }}</td>
                 <td>{{ mov.concepto }}</td>
                 <td>
                   {% if mov.tipo == 'INGRESO' %}
