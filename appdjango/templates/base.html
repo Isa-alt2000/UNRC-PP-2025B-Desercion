@@ -43,7 +43,7 @@
               <li class="nav-item d-flex align-items-center">
                 <form action="{% url 'users:logout' %}" method="post" style="display:inline;">
                   {% csrf_token %}
-                  <button type="submit" class="nav-link btn btn-link" style="padding:0; color:var(--color-blanco); background:none; border:none; text-decoration:none;">
+                  <button type="submit" class="nav-item d-flex align-items-center" style="padding:0; color: white; background:none; border:none; text-decoration:none;">
                     Salir
                   </button>
                 </form>
