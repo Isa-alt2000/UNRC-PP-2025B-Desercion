@@ -1,5 +1,5 @@
 from django.urls import path
-from . import finanzas
+from . import finanzas, predicciones
 
 app_name = 'dashboards'
 
@@ -12,4 +12,5 @@ urlpatterns = [
     path('cuentas/<int:cuenta_id>/movimiento/<int:movimiento_id>/eliminar/', finanzas.eliminar_movimiento, name='eliminar_movimiento'),
     path('cuentas/<int:cuenta_id>/editar-movimiento/<int:movimiento_id>/', finanzas.editar_movimiento, name='editar_movimiento'),
     path('cuentas/<int:cuenta_id>/editar/', finanzas.editar_cuenta, name='editar_cuenta'),
+    path('cuentas/<int:cuenta_id>/prediccion/', predicciones.plan_ahorro_view, name='prediccion'),
 ]

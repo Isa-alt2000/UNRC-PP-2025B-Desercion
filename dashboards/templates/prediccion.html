@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>Plan de Ahorro</h1>
+
+  <form method="get" class="form-inline" onsubmit="return validateForm()">
+    <label for="mode">Modo:</label>
+    <select name="mode" id="mode" onchange="toggleFields()">
+      <option value="constante" {% if projection_mode == 'constante' %}selected{% endif %}>Constante</option>
+      <option value="variable" {% if projection_mode == 'variable' %}selected{% endif %}>Variable (promedio últimos N meses)</option>
+    </select>
+
+    <!-- Campo para modo constante -->
+    <div id="constante-field" style="display: {% if projection_mode == 'constante' %}inline-block{% else %}none{% endif %};">
+      <label for="monto_constante">Monto constante:</label>
+      <input type="number" name="monto_constante" id="monto_constante" value="{{ monto_constante|default:0 }}" step="0.01" min="0" style="width:8rem;" />
+    </div>
+
+    <!-- Campo para modo variable -->
+    <div id="variable-field" style="display: {% if projection_mode == 'variable' %}inline-block{% else %}none{% endif %};">
+      <label for="n">N (últimos meses):</label>
+      <input type="number" name="n" id="n" value="{{ projection_n }}" min="1" style="width:4rem;" />
+      <span id="n-error" style="color: red; margin-left: 0.5rem; display: none;">
+        N debe ser entre 1 y {{ months|length }}
+      </span>
+    </div>
+
+    <label for="months_ahead">Meses a proyectar:</label>
+    <input type="number" name="months_ahead" id="months_ahead" value="{{ months_ahead|default:12 }}" min="1" style="width:5rem;" />
+
+    <button type="submit">Actualizar</button>
+  </form>
+
+  <script>
+    const totalMonths = {{ months|length }};
+
+    function toggleFields() {
+      const mode = document.getElementById('mode').value;
+      const constanteField = document.getElementById('constante-field');
+      const variableField = document.getElementById('variable-field');
+      if (mode === 'constante') {
+        constanteField.style.display = 'inline-block';
+        variableField.style.display = 'none';
+      } else {
+        constanteField.style.display = 'none';
+        variableField.style.display = 'inline-block';
+      }
+      clearNError();
+    }
+
+    function validateN() {
+      const nInput = document.getElementById('n');
+      const nError = document.getElementById('n-error');
+      const nValue = parseInt(nInput.value);
+
+      if (nValue <= 0 || nValue > totalMonths) {
+        nError.style.display = 'inline';
+        nInput.style.borderColor = 'red';
+        nInput.style.borderWidth = '2px';
+        return false;
+      }
+      return true;
+    }
+
+    function clearNError() {
+      const nInput = document.getElementById('n');
+      const nError = document.getElementById('n-error');
+      nError.style.display = 'none';
+      nInput.style.borderColor = '';
+      nInput.style.borderWidth = '';
+    }
+
+    function validateForm() {
+      const mode = document.getElementById('mode').value;
+      if (mode === 'variable') {
+        return validateN();
+      }
+      return true;
+    }
+
+    // Validar N en tiempo real cuando cambia
+    document.getElementById('n').addEventListener('input', function() {
+      const nValue = parseInt(this.value);
+      if (nValue > 0 && nValue <= totalMonths) {
+        clearNError();
+      }
+    });
+  </script>
+
+  <h2>Histórico</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Mes</th>
+        <th>Ahorro mensual</th>
+        <th>Ahorro acumulado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for month, ahorro, acumulado in historical %}
+        <tr>
+          <td>{{ month }}</td>
+          <td>${{ ahorro|floatformat:2 }}</td>
+          <td>${{ acumulado|floatformat:2 }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3">No hay movimientos registrados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Proyección ({{ projection_mode }})</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Mes</th>
+        <th>Ahorro proyectado mensual</th>
+        <th>Ahorro proyectado acumulado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pm, pav, pac in projected %}
+        <tr>
+          <td>{{ pm }}</td>
+          <td>${{ pav|floatformat:2 }}</td>
+          <td>${{ pac|floatformat:2 }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3">No hay proyecciones.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}
