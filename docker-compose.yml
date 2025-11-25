@@ -11,25 +11,25 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U proyecto_user -d proyecto_desercion"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   web:
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash entrypoint.sh
+    env_file:
+      - .env
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     depends_on:
-      - db
-    environment:
-      # Variables para que Django se conecte a Postgres
-      DB_NAME: proyecto_db
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_HOST: db
-      DB_PORT: 5432
+      db:
+        condition: service_healthy
 
 volumes:
   postgres_data:
