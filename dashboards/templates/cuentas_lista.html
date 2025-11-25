@@ -7,12 +7,12 @@
 <div class="container py-5">
   <div class="row mb-4">
     <div class="col">
-      <h1 class="display-4 fw-bold" style="color: var(--color-principal);">Mis Cuentas</h1>
+      <h1 class="display-6 fw-bold text-principal mb-2" style="color: var(--color-principal);">Mis Cuentas</h1>
     </div>
   </div>
 
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    <!-- Tarjeta para agregar nueva cuenta -->
+    <!-- nueva cuenta -->
     <div class="col">
       <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#cuentaModal">
         <div class="card h-100 border-0 shadow-sm card-add-hover">
@@ -30,7 +30,7 @@
       </a>
     </div>
 
-    <!-- Tarjetas de cuentas existentes -->
+    <!-- cuentas existentes -->
     {% for cuenta in cuentas %}
     <div class="col">
       <div class="card h-100 border-0 shadow-sm card-cuenta-hover">
@@ -108,7 +108,7 @@
           <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
           <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
         </svg>
-        No tienes cuentas registradas. ¡Crea tu primera cuenta para comenzar!
+        No tienes cuentas registradas. Crea tu primer cuenta para comenzar!
       </div>
     </div>
   </div>

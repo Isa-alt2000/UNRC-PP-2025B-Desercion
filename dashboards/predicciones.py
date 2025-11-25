@@ -9,6 +9,13 @@ from django.contrib.auth.decorators import login_required
 from .models import Movimiento
 
 
+MONTHS_ES = {
+    'Jan': 'Ene', 'Feb': 'Feb', 'Mar': 'Mar', 'Apr': 'Abr',
+    'May': 'May', 'Jun': 'Jun', 'Jul': 'Jul', 'Aug': 'Ago',
+    'Sep': 'Sep', 'Oct': 'Oct', 'Nov': 'Nov', 'Dec': 'Dic'
+}
+
+
 def _first_of_month(d: date) -> date:
     return date(d.year, d.month, 1)
 
@@ -182,15 +189,15 @@ def plan_ahorro_view(request, cuenta_id):
         months_ahead=months_ahead,
     )
 
-    months_str = [m.strftime('%Y-%m') for m in months]
-    projected_months_str = [m.strftime('%Y-%m') for m in projected_months]
+    months_str = [MONTHS_ES[m.strftime('%b')] + ' ' + m.strftime('%Y') for m in months]
+    projected_months_str = [MONTHS_ES[m.strftime('%b')] + ' ' + m.strftime('%Y') for m in projected_months]
 
     historical = list(zip(months_str, ahorro_mensual, ahorro_acumulado))
     projected = list(zip(projected_months_str, projected_savings_monthly,
                          projected_savings_cumulative))
 
-    months_str = [m.strftime('%Y-%m') for m in months]
-    projected_months_str = [m.strftime('%Y-%m') for m in projected_months]
+    months_str = [MONTHS_ES[m.strftime('%b')] + ' ' + m.strftime('%Y') for m in months]
+    projected_months_str = [MONTHS_ES[m.strftime('%b')] + ' ' + m.strftime('%Y') for m in projected_months]
 
     historical = list(zip(months_str, ahorro_mensual, ahorro_acumulado))
     projected = list(zip(projected_months_str, projected_savings_monthly,
@@ -209,6 +216,7 @@ def plan_ahorro_view(request, cuenta_id):
         'historical': historical,
         'projected': projected,
         'months_ahead': months_ahead,
+        'cuenta_id': cuenta_id,
     }
 
     return render(request, 'prediccion.html', context)

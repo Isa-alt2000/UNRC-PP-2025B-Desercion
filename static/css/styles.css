@@ -21,6 +21,7 @@ body {
 }
 .btn-principal:hover {
   background-color: #7c1b34;
+  color: var(--color-blanco) !important;
 }
 .btn-secundario {
   background-color: var(--color-secundario);
@@ -29,6 +30,7 @@ body {
 }
 .btn-secundario:hover {
   background-color: #a37d4e;
+  color: var(--color-blanco) !important;
 }
 
 /* Bootstrap*/
@@ -285,4 +287,116 @@ body {
 .btn-square.btn-outline-secundario:hover,
 .btn-square.btn-outline-secundario:focus {
   background-color: rgba(188,149,92,0.08) !important;
+}
+
+/* Estilos personalizados para prediccion.html */
+.text-principal {
+  color: var(--color-principal) !important;
+}
+
+.text-secundario {
+  color: var(--color-secundario) !important;
+}
+
+.bg-gradient-principal {
+  background: linear-gradient(135deg, var(--color-principal) 0%, #7c1b34 100%) !important;
+}
+
+.bg-gradient-secundario {
+  background: linear-gradient(135deg, var(--color-secundario) 0%, #a37d4e 100%) !important;
+}
+
+.form-select-custom {
+  border-color: #dee2e6 !important;
+  border-radius: 0.375rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.form-select-custom:focus {
+  border-color: var(--color-principal) !important;
+  box-shadow: 0 0 0 .25rem rgba(159,34,65,0.12) !important;
+}
+
+.form-control-custom {
+  border-color: #dee2e6 !important;
+  border-radius: 0.375rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.form-control-custom:focus {
+  border-color: var(--color-principal) !important;
+  box-shadow: 0 0 0 .25rem rgba(159,34,65,0.12) !important;
+}
+
+.form-control-custom.is-invalid {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 .25rem rgba(220,53,69,0.12) !important;
+}
+
+.form-label.fw-600 {
+  font-weight: 600 !important;
+}
+
+.table-success-custom {
+  background-color: #d4edda !important;
+}
+
+.table-danger-custom {
+  background-color: #f8d7da !important;
+}
+
+.table-light-projection {
+  background-color: #f8f9fa !important;
+}
+
+.table-light-projection:hover {
+  background-color: #e9ecef !important;
+}
+
+.table th {
+  font-weight: 600 !important;
+  border-bottom: 2px solid #dee2e6 !important;
+}
+
+.card-header {
+  border-bottom: none !important;
+}
+
+.card-header h5 {
+  font-weight: 600 !important;
+}
+
+.btn-principal.btn-lg,
+.btn-secundario.btn-lg {
+  font-weight: 600 !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Estilos para botones de tooltip */
+.btn-link {
+  color: var(--color-principal) !important;
+  text-decoration: none !important;
+  border: none !important;
+  background: none !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.btn-link:hover,
+.btn-link:focus {
+  color: #7c1b34 !important;
+  text-decoration: none !important;
+}
+
+.btn-link svg {
+  transition: all 0.3s ease !important;
+}
+
+.btn-link:hover svg,
+.btn-link:focus svg {
+  transform: scale(1.1) !important;
 }

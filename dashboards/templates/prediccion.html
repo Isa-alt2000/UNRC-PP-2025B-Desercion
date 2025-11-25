@@ -1,135 +1,232 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Predicion de ahorros{% endblock %}
+
 {% block content %}
-  <h1>Plan de Ahorro</h1>
-
-  <form method="get" class="form-inline" onsubmit="return validateForm()">
-    <label for="mode">Modo:</label>
-    <select name="mode" id="mode" onchange="toggleFields()">
-      <option value="constante" {% if projection_mode == 'constante' %}selected{% endif %}>Constante</option>
-      <option value="variable" {% if projection_mode == 'variable' %}selected{% endif %}>Variable (promedio últimos N meses)</option>
-    </select>
-
-    <!-- Campo para modo constante -->
-    <div id="constante-field" style="display: {% if projection_mode == 'constante' %}inline-block{% else %}none{% endif %};">
-      <label for="monto_constante">Monto constante:</label>
-      <input type="number" name="monto_constante" id="monto_constante" value="{{ monto_constante|default:0 }}" step="0.01" min="0" style="width:8rem;" />
+<div class="container mt-5 mb-5">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="display-6 fw-bold text-principal mb-2">Plan de Ahorro</h1>
+      <p class="text-muted">Proyecta y visualiza tu ahorro basado en tus movimientos financieros.</p>
     </div>
+  </div>
 
-    <!-- Campo para modo variable -->
-    <div id="variable-field" style="display: {% if projection_mode == 'variable' %}inline-block{% else %}none{% endif %};">
-      <label for="n">N (últimos meses):</label>
-      <input type="number" name="n" id="n" value="{{ projection_n }}" min="1" style="width:4rem;" />
-      <span id="n-error" style="color: red; margin-left: 0.5rem; display: none;">
-        N debe ser entre 1 y {{ months|length }}
-      </span>
+  <div class="card shadow-sm mb-4 border-0">
+    <div class="card-body">
+      <h5 class="card-title text-principal mb-3">Configurar Proyección</h5>
+      
+      <form method="get" class="row g-3" onsubmit="return validateForm()">
+        <!-- Modo -->
+        <div class="col-12 col-md-6">
+          <label for="mode" class="form-label fw-600 text-principal">
+            Modo de proyección:
+            <button type="button" class="btn btn-link p-0 ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Elige entre proyección constante (mismo monto cada mes) o variable (basada en promedio de últimos N meses)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width: 18px; height: 18px; color: var(--color-principal);">
+                <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm1,15a1,1,0,0,1-2,0V11a1,1,0,0,1,2,0ZM12,8a1.5,1.5,0,1,1,1.5-1.5A1.5,1.5,0,0,1,12,8Z"/>
+              </svg>
+            </button>
+          </label>
+          <select name="mode" id="mode" class="form-select form-select-custom" onchange="toggleFields()">
+            <option value="constante" {% if projection_mode == 'constante' %}selected{% endif %}>Constante</option>
+            <option value="variable" {% if projection_mode == 'variable' %}selected{% endif %}>Variable (promedio últimos N meses)</option>
+          </select>
+        </div>
+
+        <!-- constante -->
+        <div id="constante-field" class="col-12 col-md-6" style="display: {% if projection_mode == 'constante' %}block{% else %}none{% endif %};">
+          <label for="monto_constante" class="form-label fw-600 text-principal">
+            Monto constante:
+            <button type="button" class="btn btn-link p-0 ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Ingresa el monto que deseas ahorrar cada mes (se proyectará constantemente)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width: 18px; height: 18px; color: var(--color-principal);">
+                <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm1,15a1,1,0,0,1-2,0V11a1,1,0,0,1,2,0ZM12,8a1.5,1.5,0,1,1,1.5-1.5A1.5,1.5,0,0,1,12,8Z"/>
+              </svg>
+            </button>
+          </label>
+          <input type="number" name="monto_constante" id="monto_constante" class="form-control form-control-custom" value="{{ monto_constante|default:0 }}" step="0.01" min="0" />
+        </div>
+
+        <!-- variable -->
+        <div id="variable-field" class="col-12 col-md-6" style="display: {% if projection_mode == 'variable' %}block{% else %}none{% endif %};">
+          <label for="n" class="form-label fw-600 text-principal">
+            N (últimos meses):
+            <button type="button" class="btn btn-link p-0 ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Número de meses anteriores detectados para calcular el promedio de ahorro. Debe estar entre 1 y {{ months|length }}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width: 18px; height: 18px; color: var(--color-principal);">
+                <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm1,15a1,1,0,0,1-2,0V11a1,1,0,0,1,2,0ZM12,8a1.5,1.5,0,1,1,1.5-1.5A1.5,1.5,0,0,1,12,8Z"/>
+              </svg>
+            </button>
+          </label>
+          <input type="number" name="n" id="n" class="form-control form-control-custom" value="{{ projection_n }}" min="1" />
+        </div>
+
+        <!-- Meses a proyectar -->
+        <div class="col-12 col-md-6">
+          <label for="months_ahead" class="form-label fw-600 text-principal">Meses a proyectar:</label>
+          <input type="number" name="months_ahead" id="months_ahead" class="form-control form-control-custom" value="{{ months_ahead|default:12 }}" min="1" />
+        </div>
+
+        <!-- confirmar -->
+        <div class="col-12">
+          <button type="submit" class="btn btn-principal btn-lg">
+            <i class="bi bi-arrow-clockwise me-2"></i>Actualizar Proyección
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <label for="months_ahead">Meses a proyectar:</label>
-    <input type="number" name="months_ahead" id="months_ahead" value="{{ months_ahead|default:12 }}" min="1" style="width:5rem;" />
+  <!-- Tabla Histórico -->
+  <div class="card shadow-sm mb-4 border-0">
+    <div class="card-header bg-gradient-principal border-0 py-3">
+      <h5 class="mb-0 text-white">Histórico de Ahorros</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="text-principal fw-600">Mes</th>
+              <th class="text-principal fw-600 text-end">Ahorro Mensual</th>
+              <th class="text-principal fw-600 text-end">Ahorro Acumulado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for month, ahorro, acumulado in historical %}
+              <tr class="{% if ahorro >= 0 %}table-success-custom{% else %}table-danger-custom{% endif %}">
+                <td class="fw-500">{{ month }}</td>
+                <td class="text-end fw-bold">
+                  <span class="{% if ahorro >= 0 %}text-success-custom{% else %}text-danger-custom{% endif %}">
+                    {% if ahorro >= 0 %}+{% endif %}${{ ahorro|floatformat:2 }}
+                  </span>
+                </td>
+                <td class="text-end fw-bold">
+                  <span class="text-principal">${{ acumulado|floatformat:2 }}</span>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="3" class="text-center py-4 text-muted">
+                  <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                  No hay movimientos registrados.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-    <button type="submit">Actualizar</button>
-  </form>
+  <!-- Tabla Proyección -->
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-gradient-secundario border-0 py-3">
+      <h5 class="mb-0 text-white">Proyección ({{ projection_mode|title }})</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="text-principal fw-600">Mes</th>
+              <th class="text-principal fw-600 text-end">Ahorro Proyectado Mensual</th>
+              <th class="text-principal fw-600 text-end">Ahorro Proyectado Acumulado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for pm, pav, pac in projected %}
+              <tr class="table-light-projection">
+                <td class="fw-500">{{ pm }}</td>
+                <td class="text-end fw-bold">
+                  <span class="text-secundario">
+                    {% if pav >= 0 %}+{% endif %}${{ pav|floatformat:2 }}
+                  </span>
+                </td>
+                <td class="text-end fw-bold">
+                  <span class="text-secundario">${{ pac|floatformat:2 }}</span>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="3" class="text-center py-4 text-muted">
+                  <i class="bi bi-graph-up fs-3 d-block mb-2"></i>
+                  No hay proyecciones disponibles.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-  <script>
-    const totalMonths = {{ months|length }};
+  <!-- Botón volver -->
+  <div class="mt-4 mb-5">
+    <a href="{% url 'dashboards:detalle_cuenta' cuenta_id %}" class="btn btn-secundario btn-lg">
+      <i class="bi bi-arrow-left me-2"></i>Volver a la Cuenta
+    </a>
+  </div>
+</div>
 
-    function toggleFields() {
-      const mode = document.getElementById('mode').value;
-      const constanteField = document.getElementById('constante-field');
-      const variableField = document.getElementById('variable-field');
-      if (mode === 'constante') {
-        constanteField.style.display = 'inline-block';
-        variableField.style.display = 'none';
-      } else {
-        constanteField.style.display = 'none';
-        variableField.style.display = 'inline-block';
-      }
+<script>
+  const totalMonths = {{ months|length }};
+
+  function toggleFields() {
+    const mode = document.getElementById('mode').value;
+    const constanteField = document.getElementById('constante-field');
+    const variableField = document.getElementById('variable-field');
+    if (mode === 'constante') {
+      constanteField.style.display = 'block';
+      variableField.style.display = 'none';
+    } else {
+      constanteField.style.display = 'none';
+      variableField.style.display = 'block';
+    }
+    clearNError();
+  }
+
+  function validateN() {
+    const nInput = document.getElementById('n');
+    const nError = document.getElementById('n-error');
+    const nValue = parseInt(nInput.value);
+
+    if (nValue <= 0 || nValue > totalMonths) {
+      nError.style.display = 'block';
+      nInput.classList.add('is-invalid');
+      return false;
+    }
+    return true;
+  }
+
+  function clearNError() {
+    const nInput = document.getElementById('n');
+    const nError = document.getElementById('n-error');
+    nError.style.display = 'none';
+    nInput.classList.remove('is-invalid');
+  }
+
+  function validateForm() {
+    const mode = document.getElementById('mode').value;
+    if (mode === 'variable') {
+      return validateN();
+    }
+    return true;
+  }
+
+  // Validar N en tiempo real cuando cambia
+  document.getElementById('n').addEventListener('input', function() {
+    const nValue = parseInt(this.value);
+    if (nValue > 0 && nValue <= totalMonths) {
       clearNError();
     }
+  });
 
-    function validateN() {
-      const nInput = document.getElementById('n');
-      const nError = document.getElementById('n-error');
-      const nValue = parseInt(nInput.value);
-
-      if (nValue <= 0 || nValue > totalMonths) {
-        nError.style.display = 'inline';
-        nInput.style.borderColor = 'red';
-        nInput.style.borderWidth = '2px';
-        return false;
-      }
-      return true;
-    }
-
-    function clearNError() {
-      const nInput = document.getElementById('n');
-      const nError = document.getElementById('n-error');
-      nError.style.display = 'none';
-      nInput.style.borderColor = '';
-      nInput.style.borderWidth = '';
-    }
-
-    function validateForm() {
-      const mode = document.getElementById('mode').value;
-      if (mode === 'variable') {
-        return validateN();
-      }
-      return true;
-    }
-
-    // Validar N en tiempo real cuando cambia
-    document.getElementById('n').addEventListener('input', function() {
-      const nValue = parseInt(this.value);
-      if (nValue > 0 && nValue <= totalMonths) {
-        clearNError();
-      }
+  // Inicializar tooltips
+  document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+      new bootstrap.Tooltip(tooltipTriggerEl);
     });
-  </script>
-
-  <h2>Histórico</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Mes</th>
-        <th>Ahorro mensual</th>
-        <th>Ahorro acumulado</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for month, ahorro, acumulado in historical %}
-        <tr>
-          <td>{{ month }}</td>
-          <td>${{ ahorro|floatformat:2 }}</td>
-          <td>${{ acumulado|floatformat:2 }}</td>
-        </tr>
-      {% empty %}
-        <tr><td colspan="3">No hay movimientos registrados.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <h2>Proyección ({{ projection_mode }})</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Mes</th>
-        <th>Ahorro proyectado mensual</th>
-        <th>Ahorro proyectado acumulado</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for pm, pav, pac in projected %}
-        <tr>
-          <td>{{ pm }}</td>
-          <td>${{ pav|floatformat:2 }}</td>
-          <td>${{ pac|floatformat:2 }}</td>
-        </tr>
-      {% empty %}
-        <tr><td colspan="3">No hay proyecciones.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  });
+</script>
 
 {% endblock %}
