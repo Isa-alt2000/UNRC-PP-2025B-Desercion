@@ -6,91 +6,104 @@ Para la realización de este proyecto, se optó por utilizar django debido a su 
 ## Tareas
 - [x] Sistema de login simple que NO requiere correo dada la simplicidad del proyecto.
 - [x] App calculadora de balance personal (login necesario).
-- [ ] Visualización de predicción financiera integrando cálculo.
+- [x] Visualización de predicción financiera integrando cálculo.
 - [ ] ~~Formulario de deserciones y posterior desglose de estadísticas en un dashboard.~~
 - [ ] Dashboard de resultados de investigación extraido creado en base a formularios de google.
 - [ ] PDF de presentación con reporte ejecutivo anexado.
 
 ## Herramientas utilizadas
- - Django
- - Postgres
+ - Django (Framework Python para desarrollo web)
+ - Postgres (Motor de base de datos)
+ - Docker (Para configuración rápida)
 
-## Guia de instalación
-1. Configuración de motor de base de datos (postgres por el momento)  
-    Configuración automática para despliegue con script. **UNICAMENTE SI NO EXISTE USUARIO O DB PREVIOS CON LOS MISMOS NOMBRES. EN TODO CASO, SERÁ NECESARIO HACERLO MANUALMENTE**
-    - **script NO incluye la instalación de postgres por lo que deberá hacerse manualmente**  
+## Prerequisitos
+ - **Python:** Instalar Python 3.10+ si se va a ejecutar el proyecto localmente.
 
-    **Linux**
-    ```bash
-    chmod +x setup_postgres.sh
-    ```
+ - **pip:** Administrador de paquetes para Python (`pip` se instala normalmente con Python).
 
-    ```bash
-    ./setup_postgres.sh
-    ```
+ - **Docker (opcional):** Para levantar el proyecto con contenedores, instalar Docker Engine y Docker Compose (Linux) ó Docker Desktop(Windows).
 
-2. Creación de entorno virtual  
+ - **PostgreSQL (opcional):** Si no se opta por instalación Docker, instala Postgres o configura una DB externa.
 
-   Para correr el proyecto de forma más eficiente, es recomendable crear un entorno virtual para instalar todas las dependencias. Para esto, ejecutar:
+## Instalación
+Se cuenta con dos métodos; el método docker o con contenedores, y el método local. El método con contenedores es el más recomendado para un despliegue sencillo. EL método local es recomendable para un mayor control.  
 
-   **Linux:**
+### Configuración global  
+1. **Configuración de variables de entorno**  
 
-    ```bash
-    python3 -m venv ppvenv
-    ```
+   Las variables de entorno sirven para no exponer datos que podrían ser sensibles como son endpoints de APIs, credenciales de bases de datos, tokens, etc. Para este proyecto, no se usan datos sensibles y el .evn.example tiene variables genericas que funcionarán bien al armar los contenedores sin requerir mayor configuración.
 
-   Posteriormente para activarlo, ejecutar:  
+   Para configurar las variables de entorno genéricas:  
 
-   **Linux:**
+    **Windows**  
 
-    ```bash
-    source ppvenv/bin/activate
-    ```
+   - Copiar el archivo `.env.example` y renombrar la copia a `.env`  
 
-    Para instalar librerías, ejecutar en la raíz del proyecto:  
-
-    **Linux:**
-
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3. Configuración de variables de entorno  
-
-   Las variables de entorno sirven para no exponer datos que podrían ser sensibles como son endpoints de APIs, credenciales de bases de datos, etc. Para este proyecto, no se usan datos sensibles y el .evn.example tiene variables genericas que funcionarán bien si se hace la instalación de postgres como se hizo previamente en pasos anteriores.
-
-   Para settear las variables de entorno genéricas, ejecutar:
-
-    **Linux:**
+    **Linux:**  
 
     ```bash
     cp .env.example .env
     ```
 
-4. Migraciones django  
+## Guia de instalación docker  
+**Windows**  
+1. Instalación de docker desktop 
+   1. Descargar de sitio oficial [Aquí](https://www.docker.com/products/docker-desktop/).
 
-   Para que el proyecto funcione, hay que realizar las migraciones de django, las cuales se encargarán de las configuraciones de las bases de datos.
+   2. Instalar dependencias necesarias (pendiente).
 
-   **Linux:**
+2. Levantar los contenedores
+
+   Una vez instalado docker desktop con todas sus dependencias, ejecutar el Powershell como administrador y desde la raíz del proyecto.
+
+    ```powershell
+    docker compose up
+    ```
+
+**Linux**
+1. **Instalación de Docker**
+   1. Docker Engine: https://docs.docker.com/engine/install/
+   2. Docker Compose: https://docs.docker.com/compose/install/
+
+2. Levantar los contenedores.  
+
+   Una vez instaladas las herramientas de contenedores necesarias, ejecutar el siguiente comando en la raíz del proyecto:
 
    ```bash
-   python3 manage.py makemigrations
-   ```
-   ```bash
-   python3 manage.py migrate
-   ```
-
-5. Levantar el proyecto  
-
-   Finalmente, para levantar el proyecto, ejecutar:
-
-   **Linux:**
-
-   ```bash
-   python3 manage.py runserver
+   docker compose up
    ```
 
 Siguiendo estos pasos, se puede acceder al proyecto por medio de `http://127.0.0.1:8000/` ó `http://localhost/`
+
+## Instalación local (sin Docker)
+
+1. Crear un entorno virtual
+
+   ```bash
+   python3 -m venv ppvenv
+   source ppvenv/bin/activate
+   ```
+
+2. Instalar dependencias
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+- **Configurar variables de entorno:**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+- **Aplicar migraciones y crear superusuario:**
+
+   ```bash
+   python manage.py migrate
+   python manage.py createsuperuser
+   python manage.py collectstatic --noinput
+   python manage.py runserver
+   ```
 
 ## Uso
 La apliación cuenta con apartados de:
