@@ -2,22 +2,51 @@
 import os
 import sys
 import time
-import socket
+#import socket
 import subprocess
+import psycopg2
+
+
+# def wait_for_db():
+#     """Espera a que PostgreSQL esté listo"""
+#     print("Esperando a que PostgreSQL esté listo...")
+#     while True:
+#         try:
+#             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#             sock.connect(('db', 5432))
+#             sock.close()
+#             print("PostgreSQL está listo!")
+#             break
+#         except socket.error:
+#             time.sleep(0.1)
 
 
 def wait_for_db():
     """Espera a que PostgreSQL esté listo"""
     print("Esperando a que PostgreSQL esté listo...")
-    while True:
+    max_retries = 30
+    retry_count = 0
+    
+    while retry_count < max_retries:
         try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect(('db', 5432))
-            sock.close()
+            conn = psycopg2.connect(
+                dbname=os.getenv('DB_NAME'),
+                user=os.getenv('DB_USER'),
+                password=os.getenv('DB_PASSWORD'),
+                host=os.getenv('DB_HOST'),
+                port=os.getenv('DB_PORT'),
+                connect_timeout=3
+            )
+            conn.close()
             print("PostgreSQL está listo!")
-            break
-        except socket.error:
-            time.sleep(0.1)
+            return True
+        except psycopg2.OperationalError as e:
+            retry_count += 1
+            print(f"Intento {retry_count}/{max_retries}: PostgreSQL no está listo aún...")
+            time.sleep(1)
+    
+    print("ERROR: No se pudo conectar a PostgreSQL")
+    return False
 
 
 def run_command(command):
