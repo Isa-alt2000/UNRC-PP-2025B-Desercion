@@ -12,23 +12,33 @@
   {% endif %}
 </div>
 
-<section class="hero-section bg-primary text-white py-5 mb-5">
+<section class="hero-section bg-primary text-white py-5 mb-5 rounded-4 shadow-sm">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
+        <div class="row align-items-center g-4">
+            <!-- Contenido de texto -->
+            <div class="col-lg-6 order-2 order-lg-1">
                 <h1 class="display-4 fw-bold mb-3">Bienvenido/a</h1>
                 <p class="lead mb-4">Proyecto prototípico 2025-B: Deserción universitaria.</p>
-                <div class="d-flex gap-3">
+                
+                <!-- Botones responsivos -->
+                <div class="d-flex flex-column flex-sm-row gap-3">
                     {% if user.is_authenticated %}
                         <a href="{% url 'dashboards:lista_cuentas' %}" class="btn btn-light btn-lg">
                             <i class="fas fa-plus me-2"></i>Ver mis finanzas
                         </a>
-                        <a href="{% static 'pdf/reporte.pdf' %}" class="btn btn-outline-light btn-lg" target="_blank">
+                        <a href="{% static 'pdf/reporte.pdf' %}" class="btn btn-outline-light btn-lg position-relative" target="_blank">
                             <i class="fas fa-comments me-2"></i>Ver reporte final
+                            <svg class="external-link-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11 7.5V11.5C11 11.7652 10.8946 12.0196 10.7071 12.2071C10.5196 12.3946 10.2652 12.5 10 12.5H2.5C2.23478 12.5 1.98043 12.3946 1.79289 12.2071C1.60536 12.0196 1.5 11.7652 1.5 11.5V4C1.5 3.73478 1.60536 3.48043 1.79289 3.29289C1.98043 3.10536 2.23478 3 2.5 3H6.5M9 1.5H12.5M12.5 1.5V5M12.5 1.5L6 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                         </a>
-                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfhrUmny2SPfEjx2ru0FGbYcj8-U8MkthelQRI6ctn5jMHcfA/viewform?usp=header" class="btn btn-outline-light btn-lg" target="_blank">
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfhrUmny2SPfEjx2ru0FGbYcj8-U8MkthelQRI6ctn5jMHcfA/viewform?usp=header" 
+                           class="btn btn-outline-light btn-lg position-relative" target="_blank">
                             <i class="fas fa-user-plus me-2"></i>Contesta una encuesta
-                        </a>                        
+                            <svg class="external-link-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11 7.5V11.5C11 11.7652 10.8946 12.0196 10.7071 12.2071C10.5196 12.3946 10.2652 12.5 10 12.5H2.5C2.23478 12.5 1.98043 12.3946 1.79289 12.2071C1.60536 12.0196 1.5 11.7652 1.5 11.5V4C1.5 3.73478 1.60536 3.48043 1.79289 3.29289C1.98043 3.10536 2.23478 3 2.5 3H6.5M9 1.5H12.5M12.5 1.5V5M12.5 1.5L6 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>                      
                     {% else %}
                         <a href="{% url 'users:login' %}" class="btn btn-light btn-lg">
                             <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
@@ -42,9 +52,11 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="col-lg-6 text-center">
-             <img src="{% static 'images/campus.jpg' %}" 
-                 alt="campus-coyoacan" class="img-fluid rounded-3">
+            
+            <div class="col-lg-6 order-1 order-lg-2 text-center">
+                <img src="{% static 'images/campus.jpg' %}" 
+                     alt="campus-coyoacan" 
+                     class="img-fluid rounded-3 shadow">
             </div>
         </div>
     </div>

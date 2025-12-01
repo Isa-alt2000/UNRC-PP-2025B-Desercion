@@ -7,25 +7,33 @@
 <div class="container mt-4">
   <div class="card shadow-sm mb-4">
     <div class="card-body">
-      <div class="d-flex justify-content-between align-items-start flex-wrap">
-        <div class="mb-3 mb-md-0">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+        <!-- Información de la cuenta -->
+        <div class="flex-grow-1 mb-3 mb-lg-0">
           <h2 class="display-6 fw-bold text-principal mb-2">{{ cuenta.nombre }}</h2>
           <p class="card-text text-muted mb-2">{{ cuenta.descripcion }}</p>
           <h4 class="mb-0">
-            <span class="badge bg-secundario">Balance total: ${{ balance }}</span>
+            <span class="badge bg-secundario fs-6">Balance total: ${{ balance }}</span>
           </h4>
         </div>
-        <div>
-          <a href="{% url 'dashboards:prediccion' cuenta.id %}" class="btn btn-secundario btn-lg btn-lg me-2">
-            <i class="bi bi-graph-up me-2"></i>Predecir mis ahorros
+        
+        <!-- Botones de acción -->
+        <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-lg-auto">
+          <a href="{% url 'dashboards:prediccion' cuenta.id %}" class="btn btn-secundario btn-lg">
+            <i class="bi bi-graph-up me-2"></i>
+            <span class="d-none d-sm-inline">Predecir mis ahorros</span>
+            <span class="d-inline d-sm-none">Predicción</span>
           </a>
           <button type="button" class="btn btn-principal btn-lg" onclick="abrirModal()">
-            <i class="bi bi-plus-circle me-2"></i>Agregar movimiento
+            <i class="bi bi-plus-circle me-2"></i>
+            <span class="d-none d-sm-inline">Agregar movimiento</span>
+            <span class="d-inline d-sm-none">Nuevo</span>
           </button>
         </div>
       </div>
     </div>
   </div>
+</div>
 
   <div class="modal fade" id="movimientoModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
