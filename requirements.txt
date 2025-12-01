@@ -6,6 +6,6 @@ pillow
 crispy-bootstrap5
 django-crispy-forms
 dotenv
-
+dj-database-url
 
 

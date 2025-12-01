@@ -9,7 +9,7 @@ Para la realización de este proyecto, se optó por utilizar django debido a su 
 - [x] Visualización de predicción financiera integrando cálculo.
 - [ ] ~~Formulario de deserciones y posterior desglose de estadísticas en un dashboard.~~
 - [ ] Dashboard de resultados de investigación extraido creado en base a formularios de google.
-- [ ] PDF de presentación con reporte ejecutivo anexado.
+- [x] PDF de presentación con reporte ejecutivo anexado.
 
 ## Herramientas utilizadas
  - Django (Framework Python para desarrollo web)
@@ -79,12 +79,31 @@ Siguiendo estos pasos, se puede acceder al proyecto por medio de `http://127.0.0
 
 1. Crear un entorno virtual
 
+   ### **Linux**  
+   Creación y ejecución
+
    ```bash
    python3 -m venv ppvenv
    source ppvenv/bin/activate
    ```
 
-2. Instalar dependencias
+   ### **Windows**  
+   Dar permisos:
+   ```powershell
+   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+   ```
+
+   Creación:
+
+      ```powershell
+   python3 -m venv ppvenv
+   ```
+   Activar:
+   ```powershell
+   .\ppvenv\Scripts\activate
+   ```
+
+2. Instalar dependencias (Dentro del entrono virtual)
 
    ```bash
    pip install -r requirements.txt
