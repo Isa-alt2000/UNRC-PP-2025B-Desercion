@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Inicio{% endblock %}</title>
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
@@ -106,6 +107,26 @@
     {% block content %}
     {% endblock %}
   </main>
+<footer>
+  <div class="footer-container">
+    <div class="footer-content">
+      <div class="footer-university">
+        Equipo 1 - Grupo 301 - Proyecto prototípico - UNRC
+      </div>
+      
+      <div class="footer-names">
+        <div class="footer-name">Isa Alamirano</div>
+        <div class="footer-name">Carolina Zamora</div>
+        <div class="footer-name">Miriam Cadena</div>
+        <div class="footer-name">Christopher Ginez</div>
+      </div>
+      
+      <div class="footer-copyright">
+        <p class="mb-0">&copy; 2025 Universidad Nacional Rosario Castellanos. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </div>
+</footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
  document.addEventListener('DOMContentLoaded', function() {
     // Seleccionar todos los mensajes de alerta
